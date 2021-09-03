@@ -8,11 +8,9 @@ use App\DataProvider\OrderDataProvider;
 use App\Entity\Order;
 use App\Entity\User;
 use App\Exception\AppException;
-use App\Exception\DkbApiClientException;
 use App\Manager\Mail\MailManager;
 use App\Model\Order\OrdersCountResultModel;
 use App\Model\PaginatedDataModel;
-use App\Repository\OrderHistoryRepository;
 use App\Repository\OrderRepository;
 use App\Serializer\Normalizer\OrderNormalizer;
 use App\Traits\EntityManagerAwareTrait;
@@ -48,21 +46,6 @@ class OrderManager
     private OrderRepository $orderRepository;
 
     /**
-     * @var CategoryManager
-     */
-    private CategoryManager $categoryManager;
-
-    /**
-     * @var OrderHistoryRepository
-     */
-    private OrderHistoryRepository $orderHistoryRepository;
-
-    /**
-     * @var DkbApiClient
-     */
-    private DkbApiClient $dkbApiClient;
-
-    /**
      * @var float
      */
     private float $orderDefaultCost;
@@ -81,8 +64,6 @@ class OrderManager
      * @param OrderRepository $orderRepository
      * @param EmployeeManager $employeeManager
      * @param ClientManager $clientManager
-     * @param CategoryManager $categoryManager
-     * @param DkbApiClient $dkbApiClient
      * @param LoggerInterface $logger
      * @param NormalizerInterface $normalizer
      * @param float $orderDefaultCost
@@ -91,8 +72,6 @@ class OrderManager
         OrderRepository $orderRepository,
         EmployeeManager $employeeManager,
         ClientManager $clientManager,
-        CategoryManager $categoryManager,
-        DkbApiClient $dkbApiClient,
         LoggerInterface $logger,
         NormalizerInterface $normalizer,
         float $orderDefaultCost
@@ -100,8 +79,6 @@ class OrderManager
         $this->orderRepository = $orderRepository;
         $this->employeeManager = $employeeManager;
         $this->clientManager = $clientManager;
-        $this->categoryManager = $categoryManager;
-        $this->dkbApiClient = $dkbApiClient;
         $this->logger = $logger;
         $this->normalizer = $normalizer;
         $this->orderDefaultCost = $orderDefaultCost;
@@ -149,12 +126,10 @@ class OrderManager
 
         $client = $this->clientManager->get($clientId);
         $employee = $this->employeeManager->get($employeeId);
-        $category = $this->categoryManager->get($categoryId);
 
         $order = new Order(
             $client,
             $employee,
-            $category,
             $orderStartTime,
             $cost,
             $duration,
@@ -593,49 +568,6 @@ class OrderManager
         );
 
         return $result;
-    }
-
-    /**
-     * @param string $orderId
-     * @return Order
-     * @throws AppException
-     */
-    public function registerPaidOrder(string $orderId): Order
-    {
-        $order = $this->get($orderId);
-        $category = $order->getCategory();
-        $employee = $order->getEmployee();
-        $client = $order->getClient();
-
-        try {
-            $code = $this->dkbApiClient->createOrder(
-                $category->getName(),
-                $employee->getArea()->getCode(),
-                $employee->getCode(),
-                strval($employee->getSpeciality()->getCode()),
-                DateTimeUtils::formatDate($order->getStartTime(), DateTimeUtils::FORMAT_FOR_PATH),
-                DateTimeUtils::formatDate($order->getStartTime(), DateTimeUtils::FORMAT_TIME),
-                $order->getDuration(),
-                intval($client->getPhoneNumber()),
-                $client->getLastName(),
-                $client->getFirstName(),
-                $client->getPatronymic(),
-                DateTimeUtils::formatDate($client->getBirthDate(), DateTimeUtils::FORMAT_FOR_PATH),
-                $client->getPhoneNumber(),
-                $client->getEmail(),
-                $client->getSnils(),
-                $order->getType(),
-                $order->getClientComment(),
-            );
-
-            $order->setCode($code);
-        } catch (DkbApiCLientException $exception) {
-            $this->logger->error($exception->getMessage());
-        }
-
-        $this->entityManager->flush();
-
-        return $order;
     }
 
     /**

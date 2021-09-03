@@ -39,19 +39,6 @@ class Order
     private Employee $employee;
 
     /**
-     * @ORM\ManyToOne(targetEntity=Category::class, inversedBy="orders")
-     * @ORM\JoinColumn(name="category_id", referencedColumnName="id", nullable=true)
-     */
-    private Category $category;
-
-    /**
-     * @var Report|null
-     * @ORM\OneToOne(targetEntity="Report", mappedBy="order")
-     * @ORM\JoinColumn(name="report_id", referencedColumnName="id", nullable=true)
-     */
-    private ?Report $report;
-
-    /**
      * @var \DateTimeImmutable
      * @ORM\Column(name="create_time", type="datetime_immutable")
      */
@@ -147,19 +134,8 @@ class Order
     private Collection $payments;
 
     /**
-     * @ORM\OneToMany(targetEntity=OrderHistory::class, mappedBy="order")
-     */
-    private Collection $history;
-
-    /**
-     * @ORM\OneToMany(targetEntity=OrderDocument::class, mappedBy="order", orphanRemoval=true)
-     */
-    private Collection $documents;
-
-    /**
      * @param Client $client
      * @param Employee $employee
-     * @param Category $category
      * @param \DateTimeImmutable $startTime
      * @param float $cost
      * @param int $duration
@@ -174,7 +150,6 @@ class Order
     public function __construct(
         Client $client,
         Employee $employee,
-        Category $category,
         \DateTimeImmutable $startTime,
         float $cost,
         int $duration,
@@ -199,17 +174,12 @@ class Order
         $client->addOrder($this);
         $this->employee = $employee;
         $employee->addOrder($this);
-        $this->category = $category;
-        $category->addOrder($this);
         $this->rating = null;
         $this->ratingComment = null;
         $this->code = null;
         $this->paymentTime = null;
-        $this->report = null;
 
         $this->payments = new ArrayCollection();
-        $this->history = new ArrayCollection();
-        $this->documents = new ArrayCollection();
 
         $date = DateTimeUtils::now();
         $this->createTime = $date;
@@ -264,43 +234,6 @@ class Order
 
         $this->employee = $employee;
         $employee->addOrder($this);
-    }
-
-    /**
-     * @return Report|null
-     */
-    public function getReport(): ?Report
-    {
-        return $this->report;
-    }
-
-    /**
-     * @param Report|null $report
-     */
-    public function setReport(?Report $report): void
-    {
-        $this->report = $report;
-    }
-
-    /**
-     * @return Category
-     */
-    public function getCategory(): Category
-    {
-        return $this->category;
-    }
-
-    /**
-     * @param Category $category
-     */
-    public function setCategory(Category $category): void
-    {
-        if ($this->category === $category) {
-            return;
-        }
-
-        $this->category = $category;
-        $category->addOrder($this);
     }
 
     /**
@@ -585,69 +518,4 @@ class Order
         $this->payments->removeElement($payment);
     }
 
-    /**
-     * @return Collection|OrderHistory[]
-     */
-    public function getHistory(): Collection
-    {
-        return $this->history;
-    }
-
-    /**
-     * @param OrderHistory $orderHistory
-     */
-    public function addOrderHistory(OrderHistory $orderHistory): void
-    {
-        if ($this->history->contains($orderHistory)) {
-            return;
-        }
-
-        $this->history->add($orderHistory);
-        $orderHistory->setOrder($this);
-    }
-
-    /**
-     * @param OrderHistory $orderHistory
-     */
-    public function removeOrderHistory(OrderHistory $orderHistory): void
-    {
-        if (!$this->history->contains($orderHistory)) {
-            return;
-        }
-
-        $this->history->removeElement($orderHistory);
-    }
-
-    /**
-     * @return Collection|OrderDocument[]
-     */
-    public function getDocuments(): Collection
-    {
-        return $this->documents;
-    }
-
-    /**
-     * @param OrderDocument $document
-     */
-    public function addDocument(OrderDocument $document): void
-    {
-        if ($this->documents->contains($document)) {
-            return;
-        }
-
-        $this->documents->add($document);
-        $document->setOrder($this);
-    }
-
-    /**
-     * @param OrderDocument $document
-     */
-    public function removeDocument(OrderDocument $document): void
-    {
-        if (!$this->documents->contains($document)) {
-            return;
-        }
-
-        $this->documents->removeElement($document);
-    }
 }

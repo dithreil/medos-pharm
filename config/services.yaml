@@ -38,27 +38,6 @@ services:
         arguments:
             $from: '%env(MAIL_FROM)%'
 
-    App\Manager\OrderDocumentManager:
-        arguments:
-            $orderDocumentsUploadDir: '%env(resolve:ORDER_DOCUMENTS_UPLOAD_DIR)%'
-
-    App\Serializer\Normalizer\OrderDocumentNormalizer:
-        arguments:
-            $orderDocumentsUploadDir: '%env(resolve:ORDER_DOCUMENTS_UPLOAD_DIR)%'
-
-    App\Manager\DkbApiClient:
-        arguments:
-            $dkbApiHost: '%env(resolve:DKB_API_HOST)%'
-
-    App\Manager\OrderManager:
-        arguments:
-            $orderDefaultCost: '%env(resolve:ORDER_DEFAULT_COST)%'
-
-    App\Manager\YookassaManager:
-        arguments:
-            $idShop: '%env(resolve:YOOKASSA_ID_SHOP)%'
-            $secretApiKey: '%env(resolve:YOOKASSA_SECRET_API_KEY)%'
-
     App\EventListener\ExceptionListener:
         tags:
             - { name: kernel.event_listener, event: kernel.exception }

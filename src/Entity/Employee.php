@@ -20,25 +20,9 @@ use Doctrine\ORM\Mapping as ORM;
 class Employee extends User
 {
     /**
-     * @ORM\ManyToOne(targetEntity=Area::class, inversedBy="employees")
-     */
-    private Area $area;
-
-    /**
-     * @ORM\ManyToOne(targetEntity=Speciality::class, inversedBy="employees")
-     */
-    private Speciality $speciality;
-
-    /**
      * @ORM\OneToMany(targetEntity=Order::class, mappedBy="employee")
      */
     private Collection $orders;
-
-    /**
-     * @var Collection
-     * @ORM\OneToMany(targetEntity=Report::class, mappedBy="employee")
-     */
-    private Collection $reports;
 
     /**
      * @var int
@@ -52,8 +36,6 @@ class Employee extends User
     private array $weeklySchedule;
 
     /**
-     * @param Area $area
-     * @param Speciality $speciality
      * @param int|null $code
      * @param string $email
      * @param string $lastName
@@ -63,8 +45,6 @@ class Employee extends User
      * @param array $roles
      */
     public function __construct(
-        Area $area,
-        Speciality $speciality,
         ?int $code,
         string $email,
         string $lastName,
@@ -75,13 +55,8 @@ class Employee extends User
     ) {
         parent::__construct($email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
 
-        $this->area = $area;
-        $area->addEmployee($this);
-        $this->speciality = $speciality;
-        $speciality->addEmployee($this);
         $this->code = $code;
 
-        $this->reports = new ArrayCollection();
         $this->orders = new ArrayCollection();
         $this->weeklySchedule = EmployeeDataProvider::emptyWeeklySchedule();
     }

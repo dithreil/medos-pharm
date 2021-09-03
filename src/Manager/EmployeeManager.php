@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
-use App\DataProvider\CategoryDataProvider;
 use App\DataProvider\EmployeeDataProvider;
 use App\DataProvider\UserDataProvider;
 use App\Entity\Employee;
@@ -35,22 +34,6 @@ class EmployeeManager
      * @var EmployeeRepository
      */
     private EmployeeRepository $employeeRepository;
-
-    /**
-     * @var AreaManager
-     */
-    private AreaManager $areaManager;
-
-    /**
-     * @var SpecialityManager
-     */
-    private SpecialityManager $specialityManager;
-
-    /**
-     * @var DkbApiClient
-     */
-    private DkbApiClient $dkbApiClient;
-
     /**
      * @var ConfirmationTokenManager
      */
@@ -58,28 +41,17 @@ class EmployeeManager
 
     /**
      * @param EmployeeRepository $employeeRepository
-     * @param AreaManager $areaManager
-     * @param SpecialityManager $specialityManager
-     * @param DkbApiClient $dkbApiClient
      * @param ConfirmationTokenManager $confirmationTokenManager
      */
     public function __construct(
         EmployeeRepository $employeeRepository,
-        AreaManager $areaManager,
-        SpecialityManager $specialityManager,
-        DkbApiClient $dkbApiClient,
         ConfirmationTokenManager $confirmationTokenManager
     ) {
         $this->employeeRepository = $employeeRepository;
-        $this->areaManager = $areaManager;
-        $this->specialityManager = $specialityManager;
-        $this->dkbApiClient = $dkbApiClient;
         $this->confirmationTokenManager = $confirmationTokenManager;
     }
 
     /**
-     * @param string $areaId
-     * @param string $specialityId
      * @param int $code
      * @param string $email
      * @param string $lastName
@@ -92,8 +64,6 @@ class EmployeeManager
      * @throws AppException
      */
     public function create(
-        string $areaId,
-        string $specialityId,
         int $code,
         string $email,
         string $lastName,
@@ -103,10 +73,8 @@ class EmployeeManager
         string $password,
         array $roles = []
     ): Employee {
-        $area = $this->areaManager->get($areaId);
-        $speciality = $this->specialityManager->get($specialityId);
 
-        $employee = new Employee($area, $speciality, $code, $email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
+        $employee = new Employee($code, $email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
         $encoded = $this->passwordEncoder->encodePassword($employee, $password);
         $employee->setPassword($encoded);
 

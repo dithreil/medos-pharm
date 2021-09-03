@@ -21,16 +21,14 @@
 ## Как развернуть проект
 ### Скачивание необходимых файлов:
 ```shell script
-git clone https://репозиторий
+git clone https://github.com/dithreil/medos-pharm.git
 cd medos-pharm
 php composer.phar install
 yarn install
 ```
 
 ### Прописать необходимые переменные в env.local:
-* ORDER_DOCUMENTS_UPLOAD_DIR= `путь_где_хранятся_файлы_документов`
-* DKB_API_HOST= `ip:порт`
-* ORDER_DEFAULT_COST= `intval(базовая_стоимость_консультации)`
+
 
 ### Создание базы данных
 > создание БД

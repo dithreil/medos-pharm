@@ -1,0 +1,26 @@
+includes:
+    - vendor/phpstan/phpstan-symfony/extension.neon
+    - vendor/phpstan/phpstan-doctrine/extension.neon
+    - vendor/phpstan/phpstan-phpunit/extension.neon
+
+parameters:
+
+    paths:
+        - src
+        - tests
+
+    level: 6
+
+    tmpDir: "%rootDir%/../../../phpstan"
+
+    checkGenericClassInNonGenericObjectType: false
+    checkMissingIterableValueType: false
+
+    symfony:
+        container_xml_path: %rootDir%/../../../var/cache/dev/App_KernelDevDebugContainer.xml
+
+    excludes_analyse:
+        - "%rootDir%/../../../migrations/*"
+
+    bootstrapFiles:
+        - vendor/autoload.php

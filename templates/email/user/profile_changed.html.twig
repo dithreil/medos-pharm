@@ -1,0 +1,13 @@
+{% block subject %}
+    Данные вашего профиля были изменены
+{% endblock %}
+{% block body %}
+    <p>{{ user.fullName }},</p>
+    <p>Данные профиля после обновления</p>
+    <p>Электронный адрес: {{ user.email }}</p>
+    <p>ФИО: {{ user.lastName }} {{ user.firstName }} {{ user.patronymic }}</p>
+    <p>Номер телефона: {{ user.phoneNumber }}</p>
+    <p>СНИЛС: {{ user.snils }}</p>
+    <p>Skype: {{ user.skype }}</p>
+    <p>WhatsApp: {{ user.whatsapp }}</p>
+{% endblock %}

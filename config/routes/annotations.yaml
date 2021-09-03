@@ -1,0 +1,24 @@
+controllers:
+    resource: ../../src/Controller/*
+    type: annotation
+    exclude: '../../src/Controller/{Api,Admin}'
+
+api_controllers:
+    resource: ../../src/Controller/Api/*
+    type: annotation
+    prefix: /api
+
+admin_controllers:
+    resource: ../../src/Controller/Admin/*
+    type: annotation
+    exclude: '../../src/Controller/Admin/{Api}'
+    prefix: /admin
+
+admin_api_controllers:
+    resource: ../../src/Controller/Admin/Api/*
+    type: annotation
+    prefix: /admin/api
+
+kernel:
+    resource: ../../src/Kernel.php
+    type: annotation

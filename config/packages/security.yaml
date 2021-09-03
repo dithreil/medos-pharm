@@ -1,0 +1,46 @@
+security:
+    role_hierarchy:
+        ROLE_USER: [ROLE_USER]
+        ROLE_CLIENT: [ROLE_CLIENT, ROLE_USER]
+        ROLE_EMPLOYEE: [ROLE_EMPLOYEE, ROLE_USER]
+        ROLE_ADMIN: [ROLE_ADMIN, ROLE_EMPLOYEE]
+
+    encoders:
+        App\Entity\Client: 'bcrypt'
+        App\Entity\Employee: 'bcrypt'
+
+    providers:
+        app_db_clients:
+            entity:
+                class: App\Entity\Client
+        app_db_employees:
+            entity:
+                class: App\Entity\Employee
+        all_backend_users:
+            chain:
+                providers: ['app_db_clients', 'app_db_employees']
+
+    firewalls:
+        dev:
+            pattern: ^/(_(profiler|wdt)|css|images|js)/
+            security: false
+        main:
+            anonymous: ~
+            guard:
+                authenticators:
+                    - App\Security\EmployeeAuthenticator
+                    - App\Security\ClientAuthenticator
+                entry_point: App\Security\EmployeeAuthenticator
+            logout:
+                path: app_security_logout
+                target: /login/client
+            provider: 'all_backend_users'
+
+    access_control:
+        - { path: ^/api/doc, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/admin/login, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/(users|clients|employees), roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/api/security/confirm-email, roles: IS_AUTHENTICATED_ANONYMOUSLY }
+        - { path: ^/download, roles: ROLE_USER }
+        - { path: ^/api, roles: ROLE_USER }
+        - { path: ^/admin, roles: ROLE_ADMIN }

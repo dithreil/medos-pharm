@@ -1,0 +1,7 @@
+{
+    "extends": "stylelint-config-recommended-scss",
+    "rules": {
+        "declaration-block-no-duplicate-properties": true,
+        "block-no-empty": true
+    }
+}

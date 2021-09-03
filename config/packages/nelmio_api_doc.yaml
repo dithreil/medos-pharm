@@ -1,0 +1,9 @@
+nelmio_api_doc:
+    documentation:
+        info:
+            title: API
+            description: API для шаблона админки
+    areas:
+        path_patterns:
+            - ^/api(?!/doc)
+            - ^/admin/api

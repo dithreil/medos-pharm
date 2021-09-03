@@ -1,0 +1,16 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Авторизация{% endblock %}
+
+{% block stylesheets %}
+    {{ encore_entry_link_tags('app-admin-authorization') }}
+{% endblock %}
+
+{% block body %}
+    {{ parent() }}
+    <div id="app-admin-authorization"></div>
+{% endblock %}
+
+{% block javascripts %}
+    {{ encore_entry_script_tags('app-admin-authorization') }}
+{% endblock %}

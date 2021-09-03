@@ -1,0 +1,45 @@
+{
+  "license": "UNLICENSED",
+  "private": true,
+  "scripts": {
+    "dev-server": "encore dev-server",
+    "dev": "encore dev",
+    "watch": "encore dev --watch",
+    "build": "encore production --progress",
+    "eslint": "eslint ./assets/*/js/** --ext .js,.vue",
+    "eslint_fix": "eslint ./assets/*/js/** --ext .js,.vue --fix",
+    "stylelint": "./node_modules/stylelint/bin/stylelint.js \"assets/*/scss/**/*.(scss|sass)\" \"assets/*/js/**/*.vue\"",
+    "stylelint_fix": "./node_modules/stylelint/bin/stylelint.js \"assets/*/scss/**/*.(scss|sass)\" \"assets/*/js/**/*.vue\" --fix"
+  },
+  "dependencies": {
+    "axios": "^0.21.0",
+    "inputmask": "^5.0.5",
+    "moment": "^2.29.1",
+    "moment-timezone": "^0.5.32",
+    "quasar": "^1.14.5",
+    "stylelint": "^13.10",
+    "stylelint-config-recommended-scss": "^4.0",
+    "stylelint-scss": "^3.15",
+    "vue": "^2.6.12",
+    "vue-router": "^3.4.9",
+    "vuex": "^3.6.0",
+    "vuex-map-fields": "^1.4.1"
+  },
+  "devDependencies": {
+    "@symfony/webpack-encore": "^0.31.0",
+    "babel-eslint": "^10.1.0",
+    "core-js": "^3.0.0",
+    "eslint": "^7.14.0",
+    "eslint-config-google": "^0.13",
+    "eslint-loader": "^4.0.2",
+    "eslint-plugin-html": "^6.1.1",
+    "eslint-plugin-import": "^2.22.1",
+    "eslint-plugin-vue": "^7.1.0",
+    "node-sass": "^5.0.0",
+    "regenerator-runtime": "^0.13.2",
+    "sass-loader": "^10.1.0",
+    "vue-loader": "^15.9.5",
+    "vue-template-compiler": "^2.6.12",
+    "webpack-notifier": "^1.6.0"
+  }
+}

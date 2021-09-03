@@ -1,0 +1,20 @@
+<div class="flex justify-between items-center topbar bg-white blue-grey-10">
+    <div class="flex items-center no-wrap">
+        <div class="sidebar-burger">
+            <span class="material-icons text-primary iconOpened opened">menu_open</span>
+             <span class="material-icons text-primary iconClosed closed">menu</span>
+        </div>
+
+        <div class="topbar__title topbar__title_flex">
+            <a class="q-ma-none text-primary text-subtitle1" href="{{ path('app_admin_default_index') }}">Панель Администратора</a>
+        </div>
+    </div>
+    <div class="flex items-center">
+        {% if app.user %}
+            <div class="flex">
+                <span class="material-icons text-primary q-mr-xs">exit_to_app</span>
+                <a class="text-primary" href="{{ path('app_security_logout') }}">Выйти</a>
+            </div>
+        {% endif %}
+    </div>
+</div>

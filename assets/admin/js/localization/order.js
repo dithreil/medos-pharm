@@ -1,0 +1,48 @@
+export default {
+    orderNameSingle: 'Консультация',
+    orderNameMultiple: 'Консультации',
+    orderCreate: 'Создать консультацию',
+    orderEdit: 'Редактировать консультацию',
+    orderDelete: 'Удалить консультацию',
+    orderDateTime: 'Время проведения консультации',
+    orderEmptyList: 'Список консультаций пуст',
+    orderList: 'Список консультаций',
+
+    paymentNameSingle: 'Транзакция',
+    paymentNameMultiple: 'Транзакции',
+    paymentEmptyList: 'Список транзакций пуст',
+    paymentList: 'Список транзакций',
+
+    employeeNameSingle: 'Врач',
+    employeeNameMultiple: 'Врачи',
+    employeeCreate: 'Создать врача',
+    employeeEdit: 'Редактировать врача',
+    employeeDelete: 'Удалить врача',
+    employeeFullName: 'ФИО врача',
+    employeeEmptyList: 'Список врачей пуст',
+    employeeList: 'Список врачей',
+
+    clientNameSingle: 'Клиент',
+    clientNameMultiple: 'Клиенты',
+    clientCreate: 'Создать клиента',
+    clientEdit: 'Редактировать клиента',
+    clientDelete: 'Удалить клиента',
+    clientFullName: 'ФИО клиента',
+    clientEmptyList: 'Список клиентов пуст',
+    clientList: 'Список клиентов',
+
+    areaNameSingle: 'Регион',
+    areaNameMultiple: 'Регионы',
+    areaEmptyList: 'Список регионов пуст',
+    areaList: 'Список регионов',
+
+    specialityNameSingle: 'Специальность',
+    specialityNameMultiple: 'Специальности',
+    specialityEmptyList: 'Список специальностей пуст',
+    specialityList: 'Список специальностей',
+
+    categoryNameSingle: 'Категория',
+    categoryNameMultiple: 'Категории',
+    categoryEmptyList: 'Список категорий пуст',
+    categoryList: 'Список категорий',
+};

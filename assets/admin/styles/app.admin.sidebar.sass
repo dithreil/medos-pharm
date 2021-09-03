@@ -1,0 +1,223 @@
+input:-webkit-autofill,
+input:-webkit-autofill:hover,
+input:-webkit-autofill:focus,
+input:-webkit-autofill:active
+    -webkit-box-shadow: 0 0 0 30px white inset !important
+
+body
+    overflow: hidden
+
+a
+    text-decoration: none
+
+.main-wrapper
+    width: 100%
+    height: 100vh
+
+/* CONTENT */
+.content-wrapper
+    width: 100%
+    height: 100vh
+    padding-left: 250px
+    transition: padding-left .3s ease
+
+.page-header
+    margin: 16px 0 24px
+
+.page-content
+    width: 100%
+    height: 100%
+    overflow-y: scroll
+    padding: 8px 24px
+
+
+/* sidebar */
+.sidebar-burger
+    cursor: pointer
+    margin-right: 16px
+
+    .material-icons
+        font-size: 20px
+
+    // .closed
+    //     display: none
+    //     max-width: 20px
+
+    &.closed .closed
+        display: inherit
+
+
+.user__employeeDetails
+    text-decoration: none
+    color: #0d47a1
+
+.container
+    width: 80%
+    margin: 25px auto
+    display: flex
+    justify-content: space-between
+    flex-wrap: wrap
+    &__block
+        width: 400px
+        height: 244px
+        border: 1px solid grey
+        border-radius: 12px
+        margin-top: 20px
+        text-align: center
+        padding-top: 20px
+
+.sidebar
+    width: 100%
+    max-width: 250px
+    padding: 40px 0 24px
+    position: absolute
+    left: 0
+    top: 0
+    bottom: 0
+    z-index: 1
+    transition: max-width .3s ease
+    overflow: hidden
+
+    &-label
+        text-transform: uppercase
+        padding: 24px 16px 8px
+        position: relative
+        line-height: 1
+        margin: 0
+        color: #90caf9
+
+    &-menu
+        width: 250px
+        display: flex
+        flex-direction: column
+        justify-content: flex-start
+        align-items: flex-start
+        list-style-type: none
+        padding: 0
+        margin: 0
+
+        &__item
+            width: 100%
+            display: flex
+            justify-content: flex-start
+            align-items: center
+            flex-wrap: nowrap
+            padding: 0 16px 0 12px
+            transition: background .3s ease
+            color: #ffffff
+
+            .material-icons
+                margin-right: 8px
+                color: #90caf9
+                transition: color .3s ease
+
+            a
+                display: block
+                width: 100%
+                color: #ffffff
+                text-decoration: none
+                line-height: 2.8
+                font-size: 14px
+                transition: color .3s ease, background .3s ease, transform .3s ease
+
+            &:hover
+                background-color: #1976d2
+
+                .material-icons
+                    color: #ffffff
+
+                a
+                    color: #ffffff
+                    transform: translateX(4px)
+
+    &.closed
+        max-width: 1px
+
+    &:hover
+        max-width: 250px
+
+    &.closed+.content-wrapper
+        padding-left: 1px
+
+
+
+/* EXPAND sidebar MENU */
+.expand-menu
+    display: none
+    justify-content: space-between
+    align-items: center
+    cursor: pointer
+    transition: color .3s ease
+
+    &::after
+        font-family: "Material Icons"
+        content: "\e5cf"
+        font-size: 20px
+        color: #90caf9
+        transition: transform .3s ease, color .3s ease
+
+    &:hover
+        color: #ffffff
+
+        &::after
+            color: #ffffff
+
+    &.closed
+        &::after
+            transform: rotate(-90deg)
+
+.expand-menu+.sidebar-menu
+    overflow: hidden
+    max-height: 100vh
+    transition: max-height .3s ease
+
+.expand-menu.closed+.sidebar-menu
+    max-height: 0
+
+
+
+
+/* TOPBAR */
+.topbar
+    width: 100%
+    height: 40px
+    position: sticky
+    top: 0
+    right: 0
+    left: 0
+    z-index: 10
+    padding: 8px 16px
+    border-bottom: 1px solid #eeeeee
+    background: #ffffff
+    box-shadow: 0 1px 5px rgba(0,0,0,0), 0 2px 2px rgba(0,0,0,0), 0 3px 1px -2px rgba(0,0,0,0)
+    transition: all 0.3s ease
+
+    &__title
+        width: 100%
+        max-width: 200px
+
+    &.sticky
+        box-shadow: 0 1px 5px rgba(0,0,0,0.2), 0 2px 2px rgba(0,0,0,0.14), 0 3px 1px -2px rgba(0,0,0,0.12)
+
+.topbar__title_flex
+    height: 20px
+    display: flex
+    align-items: center
+
+
+
+/* CONTENT */
+.content-wrapper
+    width: 100%
+    height: calc(100vh - 40px)
+    padding-left: 250px
+    transition: padding-left .3s ease
+
+.page-header
+    margin: 16px 0 24px
+
+.page-content
+    width: 100%
+    height: 100%
+    overflow-y: scroll
+    padding: 8px 24px

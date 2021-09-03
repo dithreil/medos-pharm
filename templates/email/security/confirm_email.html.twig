@@ -1,0 +1,8 @@
+{% block subject %}
+    Подтверждение электронного адреса
+{% endblock %}
+{% block body %}
+    <p>{{ user.fullName }},</p>
+    <p>Для подтверждения электронного адреса учётной записи перейдите, пожалуйста, по ссылке: <a href="{{ confirmation_link }}">{{ confirmation_link }}</a></p>
+{% endblock %}
+

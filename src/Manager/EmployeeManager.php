@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
+
 use App\DataProvider\EmployeeDataProvider;
 use App\DataProvider\UserDataProvider;
 use App\Entity\Employee;
@@ -52,7 +53,6 @@ class EmployeeManager
     }
 
     /**
-     * @param int $code
      * @param string $email
      * @param string $lastName
      * @param string $firstName
@@ -64,7 +64,6 @@ class EmployeeManager
      * @throws AppException
      */
     public function create(
-        int $code,
         string $email,
         string $lastName,
         string $firstName,
@@ -74,7 +73,7 @@ class EmployeeManager
         array $roles = []
     ): Employee {
 
-        $employee = new Employee($code, $email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
+        $employee = new Employee($email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
         $encoded = $this->passwordEncoder->encodePassword($employee, $password);
         $employee->setPassword($encoded);
 
@@ -110,9 +109,6 @@ class EmployeeManager
         }
 
         return $this->create(
-            $schema->area,
-            $schema->speciality,
-            $schema->code,
             $schema->email,
             $schema->lastName,
             $schema->firstName,
@@ -141,29 +137,6 @@ class EmployeeManager
         } catch (UnexpectedResultException $e) {
             throw new AppException($e->getMessage(), Response::HTTP_BAD_REQUEST, $e);
         }
-    }
-
-    /**
-     * @param array $filters
-     * @return Employee[]
-     * @throws AppException
-     */
-    public function searchWithWeekSchedule(array $filters): array
-    {
-        $result = [];
-        if (array_key_exists('areaCode', $filters) &&
-            array_key_exists('categoryCode', $filters) &&
-            array_key_exists('date', $filters) &&
-            array_key_exists('specialityCode', $filters)
-        ) {
-            $area = intval($filters['areaCode']);
-            $category = strval($filters['categoryCode']);
-            $date = $filters['date'];
-            $speciality = intval($filters['specialityCode']);
-            $result = $this->loadEmployeesWithWeekSchedules($area, $date, $category, $speciality);
-        }
-
-        return $result;
     }
 
     /**
@@ -284,111 +257,6 @@ class EmployeeManager
     }
 
     /**
-     * @param string $date
-     * @return Employee[]
-     * @throws AppException
-     */
-    public function refreshEmployeesByAllAreas(string $date): array
-    {
-        $areas = $this->areaManager->showAreas();
-        $result = [];
-
-        foreach ($areas as $area) {
-            $employeesOfArea = $this
-                ->loadEmployeesWithWeekSchedules($area->getCode(), $date, CategoryDataProvider::PAID_SERVICES, 0);
-            array_push($result, ...$employeesOfArea);
-        }
-        return $result;
-    }
-
-    /**
-     * @param int $areaCode
-     * @param string $date
-     * @param string $category
-     * @param int $specialityCode
-     * @return Employee[]
-     * @throws AppException
-     */
-    public function loadEmployeesWithWeekSchedules(
-        int $areaCode,
-        string $date,
-        string $category,
-        int $specialityCode
-    ): array {
-        $weekSchedules = $this->dkbApiClient->getWeekSchedules($areaCode, $date, $category, $specialityCode);
-        $area = $this->areaManager->findByCode($areaCode);
-        $result = [];
-
-        foreach ($weekSchedules as $weekSchedule) {
-            $employee = $this->findByCode($weekSchedule['prvCode']);
-            list($lastName, $firstName, $patronymic) = explode(" ", $weekSchedule['prvName']);
-            $speciality = $this->specialityManager->findByCode($weekSchedule['sptCode']);
-
-            if (!$employee instanceof Employee) {
-                $employee = $this
-                    ->generateEmployeeByApi(
-                        $area->getId(),
-                        $weekSchedule['prvCode'],
-                        $lastName,
-                        $firstName,
-                        $patronymic,
-                        $speciality->getId()
-                    );
-            } else {
-                if (!$employee->isEqualForApi($weekSchedule['sptCode'], $lastName, $firstName, $patronymic)) {
-                    $this->edit(
-                        $employee->getId(),
-                        $employee->getEmail(),
-                        $employee->getPhoneNumber()
-                    );
-                    $employee->setLastName($lastName);
-                    $employee->setFirstName($firstName);
-                    $employee->setPatronymic($patronymic);
-                    $employee->setArea($area);
-                    $employee->setSpeciality($speciality);
-                    $this->entityManager->flush();
-                }
-            }
-
-            $employeeWeekSchedule = EmployeeDataProvider::transformPlainWeekScheduleToItems($weekSchedule['hours'], $date);
-            $employee->setWeeklySchedule($employeeWeekSchedule);
-            $result[] = $employee;
-        }
-        return $result;
-    }
-
-    /**
-     * @param int $areaCode
-     * @param string $category
-     * @param int $employeeCode
-     * @param int $specialityCode
-     * @param string $date
-     * @return DailyScheduleItem[]
-     * @throws AppException
-     */
-    public function loadEmployeeDailySchedule(
-        int $areaCode,
-        string $category,
-        int $employeeCode,
-        int $specialityCode,
-        string $date
-    ): array {
-        $dailySchedule = $this->dkbApiClient->getDaySchedule($areaCode, $employeeCode, $date, $category, $specialityCode);
-        $result = [];
-
-        foreach ($dailySchedule as $dailyScheduleRecord) {
-            $result[] = new DailyScheduleItem(
-                $dailyScheduleRecord['bTime'],
-                $dailyScheduleRecord['eTime'],
-                $dailyScheduleRecord['duration'],
-                $dailyScheduleRecord['locCode'],
-                $dailyScheduleRecord['busy']
-            );
-        }
-        return $result;
-    }
-
-    /**
      * @param RestorePasswordModelSchema $schema
      * @throws AppException
      */
@@ -440,63 +308,6 @@ class EmployeeManager
     public function findByCode(int $code): ?Employee
     {
         $result = $this->employeeRepository->findOneBy(['code' => $code]);
-
-        return $result;
-    }
-
-    /**
-     * @param string $areaId
-     * @param int $code
-     * @param string $lastName
-     * @param string $firstName
-     * @param string $patronymic
-     * @param string $specialityId
-     * @return Employee
-     * @throws AppException
-     */
-    public function generateEmployeeByApi(string $areaId, int $code, string $lastName, string $firstName, string $patronymic, string $specialityId): Employee
-    {
-        try {
-            $password = bin2hex(random_bytes(4));
-            $phoneNumber = bin2hex(random_bytes(5));
-        } catch (\Exception $e) {
-            throw new AppException($e->getMessage());
-        }
-
-        $email = $password . '@example.com';
-
-        $schema = new CreateEmployeeSchema($email, $lastName, $firstName, $phoneNumber, $patronymic);
-        $schema->code = $code;
-        $schema->password = $password;
-        $schema->area = $areaId;
-        $schema->speciality = $specialityId;
-
-        $employee = $this->createEmployee($schema);
-
-        return $employee;
-    }
-
-    /**
-     * @param array $filters
-     * @return DailyScheduleItem[]
-     * @throws AppException
-     */
-    public function getDailySchedule(array $filters): array
-    {
-        $result = [];
-        if (array_key_exists('areaCode', $filters) &&
-            array_key_exists('employeeCode', $filters) &&
-            array_key_exists('date', $filters) &&
-            array_key_exists('categoryCode', $filters) &&
-            array_key_exists('specialityCode', $filters)
-        ) {
-            $area = intval($filters['areaCode']);
-            $employee = intval($filters['employeeCode']);
-            $category = strval($filters['categoryCode']);
-            $date = $filters['date'];
-            $speciality = intval($filters['specialityCode']);
-            $result = $this->dkbApiClient->getDaySchedule($area, $employee, $date, $category, $speciality);
-        }
 
         return $result;
     }

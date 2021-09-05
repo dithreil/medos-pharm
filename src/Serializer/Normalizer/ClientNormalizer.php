@@ -67,12 +67,7 @@ class ClientNormalizer extends AbstractCustomNormalizer
                     'skype' => $object->getSkype(),
                     'whatsapp' => $object->getWhatsapp(),
                     'isActive' => $object->isActive(),
-                    'birthDate' => DateTimeUtils::formatDate($object->getBirthDate(), DateTimeUtils::FORMAT_DATE),
-                    'orders' => $this->normalizer->normalize(
-                        $object->getOrders(),
-                        $format,
-                        [OrderNormalizer::CONTEXT_TYPE_KEY => OrderNormalizer::TYPE_IN_CLIENT]
-                    )
+                    'birthDate' => DateTimeUtils::formatDate($object->getBirthDate(), DateTimeUtils::FORMAT_DATE)
                 ];
         }
 

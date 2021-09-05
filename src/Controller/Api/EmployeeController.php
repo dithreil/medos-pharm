@@ -81,7 +81,7 @@ class EmployeeController extends AbstractController
         $filters = $request->query->all();
 
         try {
-            $payload = $manager->searchWithWeekSchedule($filters);
+            $payload = $manager->search($filters);
         } catch (AppException $e) {
             throw new ApiException($e);
         }

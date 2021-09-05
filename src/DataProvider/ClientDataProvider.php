@@ -8,7 +8,6 @@ use App\Model\Client\Document;
 
 class ClientDataProvider
 {
-
     /**
      * @param array $requiredDocuments
      * @return Document[]

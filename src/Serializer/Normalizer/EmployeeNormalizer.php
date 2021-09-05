@@ -39,7 +39,6 @@ class EmployeeNormalizer extends AbstractCustomNormalizer
                     'email' => $object->getRealEmail(),
                     'fullName' => $object->getFullName(),
                     'phoneNumber' => $object->getRealPhoneNumber(),
-                    'speciality' => $object->getSpeciality()->getName(),
                 ];
                 break;
             case self::TYPE_LIST:
@@ -48,25 +47,13 @@ class EmployeeNormalizer extends AbstractCustomNormalizer
                     'email' => $object->getRealEmail(),
                     'fullName' => $object->getFullName(),
                     'isActive' => $object->isActive(),
-                    'phoneNumber' => $object->getRealPhoneNumber(),
-                    'speciality' => $object->getSpeciality()->getName(),
-                    'code' => $object->getCode(),
-                    'areaCode' => $object->getArea()->getCode(),
-                    'specialityCode' => $object->getSpeciality()->getCode(),
+                    'phoneNumber' => $object->getRealPhoneNumber()
                 ];
                 break;
             case self::TYPE_IN_WEEK_SCHEDULE:
                 $result = [
                     'id' => $object->getId(),
-                    'code' => $object->getCode(),
-                    'fullName' => $object->getFullName(),
-                    'areaId' => $object->getArea()->getId(),
-                    'areaCode' => $object->getArea()->getCode(),
-                    'areaName' => $object->getArea()->getName(),
-                    'specialityId' => $object->getSpeciality()->getId(),
-                    'specialityCode' => $object->getSpeciality()->getCode(),
-                    'specialityName' => $object->getSpeciality()->getName(),
-                    'weekSchedule' => $object->getWeeklySchedule()
+                    'fullName' => $object->getFullName()
                 ];
                 break;
             default:
@@ -78,21 +65,7 @@ class EmployeeNormalizer extends AbstractCustomNormalizer
                     'patronymic' => $object->getPatronymic(),
                     'fullName' => $object->getFullName(),
                     'phoneNumber' => $object->getRealPhoneNumber(),
-                    'speciality' => $object->getSpeciality()->getName(),
-                    'code' => $object->getCode(),
-                    'areaCode' => $object->getArea()->getCode(),
-                    'specialityCode' => $object->getSpeciality()->getCode(),
-                    'isActive' => $object->isActive(),
-                    'orders' => $this->normalizer->normalize(
-                        $object->getOrders(),
-                        $format,
-                        [OrderNormalizer::CONTEXT_TYPE_KEY => OrderNormalizer::TYPE_IN_EMPLOYEE]
-                    ),
-                    'reports' => $this->normalizer->normalize(
-                        $object->getReports(),
-                        $format,
-                        [ReportNormalizer::CONTEXT_TYPE_KEY => ReportNormalizer::TYPE_IN_LIST]
-                    )
+                    'isActive' => $object->isActive()
                 ];
         }
 

@@ -7,19 +7,21 @@ namespace DoctrineMigrations;
 use Doctrine\DBAL\Schema\Schema;
 use Doctrine\Migrations\AbstractMigration;
 
-/**
- * Auto-generated Migration: Please modify to your needs!
- */
 final class Version20210414090759 extends AbstractMigration
 {
+    /**
+     * @return string
+     */
     public function getDescription() : string
     {
-        return '';
+        return 'Add tables: Clients, Employees, Confirmation tokens';
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function up(Schema $schema) : void
     {
-        // this up() migration is auto-generated, please modify it to your needs
         $this->addSql("CREATE TABLE clients (
             id CHAR(36) NOT NULL COMMENT '(DC2Type:guid)',
             snils VARCHAR(11) DEFAULT NULL,
@@ -50,7 +52,6 @@ final class Version20210414090759 extends AbstractMigration
         ) DEFAULT CHARACTER SET utf8mb4 COLLATE `utf8mb4_unicode_ci` ENGINE = InnoDB");
         $this->addSql("CREATE TABLE employees (
             id CHAR(36) NOT NULL COMMENT '(DC2Type:guid)',
-            specialization VARCHAR(255) NOT NULL,
             first_name VARCHAR(255) NOT NULL,
             last_name VARCHAR(255) NOT NULL,
             patronymic VARCHAR(255) DEFAULT NULL,
@@ -67,9 +68,11 @@ final class Version20210414090759 extends AbstractMigration
         $this->addSql("ALTER TABLE confirmation_tokens ADD CONSTRAINT FK_75A5965EA76ED395 FOREIGN KEY (client_id) REFERENCES clients (id)");
     }
 
+    /**
+     * @param Schema $schema
+     */
     public function down(Schema $schema) : void
     {
-        // this down() migration is auto-generated, please modify it to your needs
         $this->addSql("ALTER TABLE confirmation_tokens DROP FOREIGN KEY FK_75A5965EA76ED395");
         $this->addSql("DROP TABLE employees");
         $this->addSql("DROP TABLE confirmation_tokens");

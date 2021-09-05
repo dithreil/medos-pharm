@@ -42,12 +42,6 @@ class Client extends User
     private ?string $whatsapp;
 
     /**
-     * @ORM\OneToMany(targetEntity=Order::class, mappedBy="client")
-     */
-    private Collection $orders;
-
-    /**
-     * Client constructor.
      * @param string $email
      * @param string $lastName
      * @param string $firstName
@@ -71,7 +65,6 @@ class Client extends User
         $this->skype = null;
         $this->whatsapp = null;
         $this->snils = null;
-        $this->orders = new ArrayCollection();
     }
 
     /**
@@ -146,38 +139,5 @@ class Client extends User
     public function setWhatsapp(?string $whatsapp): void
     {
         $this->whatsapp = $whatsapp;
-    }
-
-    /**
-     * @return Collection|Order[]
-     */
-    public function getOrders(): Collection
-    {
-        return $this->orders;
-    }
-
-    /**
-     * @param Order $order
-     */
-    public function addOrder(Order $order): void
-    {
-        if ($this->orders->contains($order)) {
-            return;
-        }
-
-        $this->orders->add($order);
-        $order->setClient($this);
-    }
-
-    /**
-     * @param Order $order
-     */
-    public function removeOrder(Order $order): void
-    {
-        if (!$this->orders->contains($order)) {
-            return;
-        }
-
-        $this->orders->removeElement($order);
     }
 }

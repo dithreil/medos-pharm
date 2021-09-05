@@ -105,7 +105,6 @@ class CreateAdminUserCommand extends Command
 
         try {
             $this->employeeManager->create(
-                1001,
                 $email,
                 'Админ',
                 'Админ',

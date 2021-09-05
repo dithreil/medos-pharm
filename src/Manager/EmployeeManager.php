@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Manager;
 
-
 use App\DataProvider\EmployeeDataProvider;
 use App\DataProvider\UserDataProvider;
 use App\Entity\Employee;

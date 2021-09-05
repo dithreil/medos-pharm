@@ -22,7 +22,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
 class EmployeeRepository extends ServiceEntityRepository implements UserLoaderInterface
 {
     /**
-     * EmployeeRepository constructor.
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)

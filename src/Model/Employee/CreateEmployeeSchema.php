@@ -11,18 +11,6 @@ class CreateEmployeeSchema extends EditUserModelSchema
 {
     /**
      * @var string
-     * @Assert\NotBlank(message="Area is required")
-     */
-    public string $area;
-
-    /**
-     * @var string
-     * @Assert\NotBlank(message="Speciality is required")
-     */
-    public string $speciality;
-
-    /**
-     * @var string
      * @Assert\NotBlank(message="Password is required")
      */
     public string $password;

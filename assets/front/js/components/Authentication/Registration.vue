@@ -134,6 +134,7 @@
                 </q-checkbox>
                 <div class="column justify-start items-start mb-4">
                     <router-link
+
                         tag="a"
                         :to="{name: 'Authorization', params: {userType: 'client'}}"
                         class="q-mb-sm text-primary"

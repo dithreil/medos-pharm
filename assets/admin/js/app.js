@@ -7,9 +7,8 @@ import iconSet from 'quasar/icon-set/material-icons-round';
 import ErrorMessages from '../../common/vue-plugins/ErrorMessages';
 import langRu from 'quasar/lang/ru';
 import '../styles/app.sass';
-import loc from './localization';
 import moment from 'moment';
-import {changePaginationKeys} from '../../common/utils/changePaginationKeys';
+
 
 Vue.use(Quasar, {
     iconSet,
@@ -17,9 +16,7 @@ Vue.use(Quasar, {
 });
 Vue.use(ErrorMessages);
 
-Vue.prototype.$loc = loc;
 Vue.prototype.$moment = moment;
-Vue.prototype.$changePaginationKeys = changePaginationKeys;
 
 new Vue({
     store,

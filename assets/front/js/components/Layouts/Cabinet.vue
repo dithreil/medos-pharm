@@ -10,17 +10,13 @@
                 <router-view/>
             </q-page>
         </q-page-container>
-        <NavMenu />
-        <UserNotifier />
     </q-layout>
 </template>
 
 <script>
-import UserNotifier from '../Cabinet/Common/Misc/UserNotifier.vue';
-import NavMenu from '../Cabinet/Common/Misc/NavMenu';
+
 
 export default {
     name: 'Cabinet',
-    components: {NavMenu, UserNotifier},
 };
 </script>

@@ -10,6 +10,7 @@ class ProducerNormalizer extends AbstractCustomNormalizer
 {
     public const CONTEXT_TYPE_KEY = 'producer';
     public const TYPE_IN_LIST = 'in_list';
+    public const TYPE_IN_NOMENCLATURE = 'in_nomenclature';
 
     /**
      * @param mixed $data
@@ -37,12 +38,20 @@ class ProducerNormalizer extends AbstractCustomNormalizer
                     'country' => $object->getCountry()
                 ];
                 break;
+            case self::TYPE_IN_NOMENCLATURE:
+                $result = [
+                    'id' => $object->getId(),
+                    'shortName' => $object->getShortName()
+                ];
+                break;
             default:
                 $result = [
                     'id' => $object->getId(),
                     'shortName' => $object->getShortName(),
                     'country' => $object->getCountry(),
-                    'fullName' => $object->getFullName()
+                    'fullName' => $object->getFullName(),
+                    'createTime' => $object->getCreateTime(),
+                    'updateTime' => $object->getUpdateTime()
                 ];
         }
 

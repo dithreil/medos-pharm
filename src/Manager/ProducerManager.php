@@ -79,7 +79,7 @@ class ProducerManager
         $result = $this->producerRepository->find($id);
 
         if (!$result instanceof Producer) {
-            throw new AppException("Producer was not found!");
+            throw new AppException("Producer was not found!", Response::HTTP_NOT_FOUND);
         }
 
         return $result;

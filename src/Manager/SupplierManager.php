@@ -94,7 +94,7 @@ class SupplierManager
     {
         $result = $this->supplierRepository->find($id);
         if (!$result instanceof Supplier) {
-            throw  new AppException("Supplier was not found!");
+            throw  new AppException("Supplier was not found!", Response::HTTP_NOT_FOUND);
         }
 
         return $result;

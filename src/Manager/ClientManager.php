@@ -41,7 +41,7 @@ class ClientManager
     /**
      * @var ConfirmationTokenManager
      */
-    private $confirmationTokenManager;
+    private ConfirmationTokenManager $confirmationTokenManager;
 
     /**
      * @var UrlGeneratorInterface

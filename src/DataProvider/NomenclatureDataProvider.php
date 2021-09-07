@@ -36,18 +36,6 @@ class NomenclatureDataProvider
     /**
      * @return string[]
      */
-    public static function priceTypes(): array
-    {
-        return [
-            self::PRICE_TYPE_NORMAL => 'Обычная',
-            self::PRICE_TYPE_PROMOTIONAL => 'Со скидкой',
-            self::PRICE_TYPE_SPECIAL => 'Специальная'
-        ];
-    }
-
-    /**
-     * @return string[]
-     */
     public static function medForms(): array
     {
         return [
@@ -77,15 +65,6 @@ class NomenclatureDataProvider
     }
 
     /**
-     * @param string $priceType
-     * @return int|null
-     */
-    public static function getIntValueOfPriceType(string $priceType): ?int
-    {
-        return array_search($priceType, self::priceTypes()) ? array_search($priceType, self::priceTypes()) : null;
-    }
-
-    /**
      * @param string $medicalForm
      * @return int|null
      */
@@ -95,12 +74,12 @@ class NomenclatureDataProvider
     }
 
     /**
-     * @param int|null $priceType
-     * @return bool
+     * @param int $key
+     * @return string|null
      */
-    public static function isPriceTypeAllowed(?int $priceType): bool
+    public static function getStringValueOfMedForms(int $key): ?string
     {
-        return in_array($priceType, self::priceTypes());
+        return array_key_exists($key, self::medForms()) ? self::medForms()[$key] : null;
     }
 
     /**

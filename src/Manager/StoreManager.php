@@ -79,7 +79,7 @@ class StoreManager
         $result = $this->storeRepository->find($id);
 
         if (!$result instanceof Store) {
-            throw new AppException("Store was not found!");
+            throw new AppException("Store was not found!", Response::HTTP_NOT_FOUND);
         }
 
         return $result;

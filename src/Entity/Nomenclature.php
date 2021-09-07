@@ -34,10 +34,10 @@ class Nomenclature
     private string $name;
 
     /**
-     * @var int
-     * @ORM\Column(name="price_type", type="smallint")
+     * @var bool
+     * @ORM\Column(name="is_vat", type="boolean")
      */
-    private int $priceType;
+    private bool $isVat;
 
     /**
      * @var int
@@ -79,20 +79,20 @@ class Nomenclature
      * @param Producer $producer
      * @param string $name
      * @param int $medicalForm
-     * @param int $priceType
+     * @param bool $isVat
      * @throws AppException
      */
     public function __construct(
         Producer $producer,
         string $name,
         int $medicalForm,
-        int $priceType = NomenclatureDataProvider::PRICE_TYPE_NORMAL
+        bool $isVat
     ) {
         $this->id = Uuid::uuid4()->toString();
         $this->producer = $producer;
         $this->name = $name;
         $this->medicalForm = $medicalForm;
-        $this->priceType = $priceType;
+        $this->isVat = $isVat;
 
         $this->characteristics = new ArrayCollection();
 
@@ -163,23 +163,19 @@ class Nomenclature
     }
 
     /**
-     * @return int
+     * @return bool
      */
-    public function getPriceType(): int
+    public function isVat(): bool
     {
-        return $this->priceType;
+        return $this->isVat;
     }
 
     /**
-     * @param int $priceType
-     * @throws AppException
+     * @param bool $isVat
      */
-    public function setPriceType(int $priceType): void
+    public function setIsVat(bool $isVat): void
     {
-        if (!NomenclatureDataProvider::isPriceTypeAllowed($priceType)) {
-            throw new AppException('Price type is not allowed!');
-        }
-        $this->priceType = $priceType;
+        $this->isVat = $isVat;
     }
 
     /**

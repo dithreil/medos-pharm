@@ -34,6 +34,12 @@ class EmployeeManager
      * @var EmployeeRepository
      */
     private EmployeeRepository $employeeRepository;
+
+    /**
+     * @var StoreManager
+     */
+    private StoreManager $storeManager;
+
     /**
      * @var ConfirmationTokenManager
      */
@@ -41,17 +47,21 @@ class EmployeeManager
 
     /**
      * @param EmployeeRepository $employeeRepository
+     * @param StoreManager $storeManager
      * @param ConfirmationTokenManager $confirmationTokenManager
      */
     public function __construct(
         EmployeeRepository $employeeRepository,
+        StoreManager $storeManager,
         ConfirmationTokenManager $confirmationTokenManager
     ) {
         $this->employeeRepository = $employeeRepository;
+        $this->storeManager = $storeManager;
         $this->confirmationTokenManager = $confirmationTokenManager;
     }
 
     /**
+     * @param string $storeId
      * @param string $email
      * @param string $lastName
      * @param string $firstName
@@ -60,9 +70,9 @@ class EmployeeManager
      * @param string $password
      * @param array $roles
      * @return Employee
-     * @throws AppException
      */
     public function create(
+        string $storeId,
         string $email,
         string $lastName,
         string $firstName,
@@ -71,8 +81,9 @@ class EmployeeManager
         string $password,
         array $roles = []
     ): Employee {
+        $store = $this->storeManager->get($storeId);
 
-        $employee = new Employee($email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
+        $employee = new Employee($store, $email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
         $encoded = $this->passwordEncoder->encodePassword($employee, $password);
         $employee->setPassword($encoded);
 
@@ -101,13 +112,8 @@ class EmployeeManager
             throw new AppException('Employee with specified phone already exists', Response::HTTP_BAD_REQUEST);
         }
 
-        $existEmployee = $this->employeeRepository->findOneBy(['code' => $schema->code]);
-
-        if ($existEmployee instanceof Employee) {
-            throw new AppException('Employee with specified code already exists', Response::HTTP_BAD_REQUEST);
-        }
-
         return $this->create(
+            $schema->storeId,
             $schema->email,
             $schema->lastName,
             $schema->firstName,

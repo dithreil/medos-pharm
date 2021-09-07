@@ -28,40 +28,8 @@ class EmployeeController extends AbstractController
      * @Route(path="", methods={"GET"}, name="app.api.employees.get_list")
      * @OA\Get(
      *     tags={"Фронт. Управление сотрудниками"},
-     *     summary="Недельное расписание сотрудников",
-     *     description="Получение недельного расписания сотрудников",
-     *     @OA\Parameter(
-     *         name="areaCode",
-     *         in="query",
-     *         description="Код региона: 101, 102, 103, 104, 105, 107",
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="specialityCode",
-     *         in="query",
-     *         description="Код специальности:0 - все специальности или от 37 до 89 кроме (58,68)",
-     *         @OA\Schema(
-     *             type="integer"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="categoryCode",
-     *         in="query",
-     *         description="Код категории: 1 латинская буква - V, C, M, R, W, A",
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
-     *     @OA\Parameter(
-     *         name="date",
-     *         in="query",
-     *         description="Дата, вошедшая в неделю, формат: 2021-05-24",
-     *         @OA\Schema(
-     *             type="string"
-     *         )
-     *     ),
+     *     summary="Список сотрудников",
+     *     description="Получение списка сотрудников",
      *     @OA\Response(
      *         response=200,
      *         description="Операция выполнена",
@@ -86,7 +54,7 @@ class EmployeeController extends AbstractController
             throw new ApiException($e);
         }
 
-        return $this->json($payload, Response::HTTP_OK, [], [EmployeeNormalizer::CONTEXT_TYPE_KEY => EmployeeNormalizer::TYPE_IN_WEEK_SCHEDULE]);
+        return $this->json($payload, Response::HTTP_OK, [], [EmployeeNormalizer::CONTEXT_TYPE_KEY => EmployeeNormalizer::TYPE_LIST]);
     }
 
     /**
@@ -101,11 +69,6 @@ class EmployeeController extends AbstractController
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *                 @OA\Property(property="area", description="Регион", type="string"),
-     *                 @OA\Property(property="speciality", description="Специализация", type="string"),
-     *                 @OA\Property(property="lastName", description="Фамилия", type="string"),
-     *                 @OA\Property(property="firstName", description="Имя", type="string"),
-     *                 @OA\Property(property="patronymic", description="Отчество", type="string"),
      *                 @OA\Property(property="email", description="Email", type="string"),
      *                 @OA\Property(property="phoneNumber", description="Телефон", type="string"),
      *             )

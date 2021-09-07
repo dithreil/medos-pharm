@@ -2,13 +2,12 @@
 
 declare(strict_types=1);
 
-
 namespace App\Controller\Api;
 
 use App\Exception\ApiException;
 use App\Exception\AppException;
-use App\Manager\ProducerManager;
-use App\Serializer\Normalizer\ProducerNormalizer;
+use App\Manager\StoreManager;
+use App\Serializer\Normalizer\StoreNormalizer;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -16,14 +15,14 @@ use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
-class ProducerController extends AbstractController
+class StoreController extends AbstractController
 {
     /**
-     * @Route(path="", methods={"GET"}, name="app.api.producers.get_list")
+     * @Route(path="", methods={"GET"}, name="app.api.stores.get_list")
      * @OA\Get(
-     *     tags={"Фронт. Управление производителями"},
-     *     summary="Список производителей",
-     *     description="Получение списка производителей",
+     *     tags={"Фронт. Управление торговыми точками"},
+     *     summary="Список торговых точек",
+     *     description="Получение списка торговых точек",
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -45,7 +44,7 @@ class ProducerController extends AbstractController
      *     @OA\Parameter(
      *         name="filter",
      *         in="query",
-     *         description="Фильтр для названия, страны",
+     *         description="Фильтр для названия, адреса",
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -69,11 +68,11 @@ class ProducerController extends AbstractController
      *     )
      * )
      * @param Request $request
-     * @param ProducerManager $manager
+     * @param StoreManager $manager
      * @return JsonResponse
      * @throws ApiException
      */
-    public function listAction(Request $request, ProducerManager $manager): JsonResponse
+    public function listAction(Request $request, StoreManager $manager): JsonResponse
     {
         try {
             $filters = $request->query->all();
@@ -82,19 +81,19 @@ class ProducerController extends AbstractController
             throw new ApiException($e);
         }
 
-        return $this->json($payload, Response::HTTP_OK, [], [ProducerNormalizer::CONTEXT_TYPE_KEY => ProducerNormalizer::TYPE_IN_LIST]);
+        return $this->json($payload, Response::HTTP_OK, [], [StoreNormalizer::CONTEXT_TYPE_KEY => StoreNormalizer::TYPE_IN_LIST]);
     }
 
     /**
-     * @Route(path="/{id}", methods={"GET"}, name="app.api.producers.get_details")
+     * @Route(path="/{id}", methods={"GET"}, name="app.api.stores.get_details")
      * @OA\Get(
-     *     tags={"Фронт. Управление производителями"},
-     *     summary="Просмотр одного производителя",
-     *     description="Данные одного производителя",
+     *     tags={"Фронт. Управление торговыми точками"},
+     *     summary="Просмотр одной торговой точки",
+     *     description="Данные одной торговой точки",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="id производителя",
+     *         description="id торговой точки",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
@@ -105,23 +104,23 @@ class ProducerController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="shortName", example="Bayer", type="string"),
-     *             @OA\Property(property="fullName", example="Bayer GBMH", type="string"),
-     *             @OA\Property(property="country", example="Германия", type="string"),
+     *             @OA\Property(property="name", example="Аптека Медос №53", type="string"),
+     *             @OA\Property(property="address", example="г. Донецк, ул. Ватутина 153б", type="string"),
+     *             @OA\Property(property="description", example="При больнице", type="string", nullable=true),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Производитель не найден"
+     *         description="Торговая точка не найдена"
      *     )
      * )
-     * @param ProducerManager $manager
+     * @param StoreManager $manager
      * @param string $id
      * @return JsonResponse
      */
-    public function detailsAction(string $id, ProducerManager $manager): JsonResponse
+    public function detailsAction(string $id, StoreManager $manager): JsonResponse
     {
         try {
             $payload = $manager->get($id);

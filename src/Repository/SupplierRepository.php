@@ -4,26 +4,26 @@ declare(strict_types=1);
 
 namespace App\Repository;
 
-use App\Entity\Producer;
+use App\Entity\Supplier;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Producer|null find($id, $lockMode = null, $lockVersion = null)
- * @method Producer|null findOneBy(array $criteria, array $orderBy = null)
- * @method Producer[]    findAll()
- * @method Producer[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Supplier|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Supplier|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Supplier[]    findAll()
+ * @method Supplier[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class ProducerRepository extends ServiceEntityRepository
+class SupplierRepository extends ServiceEntityRepository
 {
     /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Producer::class);
+        parent::__construct($registry, Supplier::class);
     }
 
     /**
@@ -52,7 +52,7 @@ class ProducerRepository extends ServiceEntityRepository
     public function countBy(array $filters): int
     {
         $qb = $this->buildFilterQuery($filters);
-        $qb->select('COUNT(p.id)');
+        $qb->select('COUNT(s.id)');
 
         return intval($qb->getQuery()->getSingleScalarResult());
     }
@@ -63,7 +63,7 @@ class ProducerRepository extends ServiceEntityRepository
      */
     private function buildFilterQuery(array $filters): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('p');
+        $qb = $this->createQueryBuilder('s');
 
         $filter = $filters['filter'] ?? null;
         $sortBy = $filters['sortBy'] ?? null;
@@ -76,16 +76,16 @@ class ProducerRepository extends ServiceEntityRepository
         if ($filter !== null) {
             $qb->andWhere(
                 $qb->expr()->orX(
-                    $qb->expr()->like('p.shortName', ':filter'),
-                    $qb->expr()->like('p.fullName', ':filter'),
-                    $qb->expr()->like('p.country', ':filter')
+                    $qb->expr()->like('s.name', ':filter'),
+                    $qb->expr()->like('s.address', ':filter'),
+                    $qb->expr()->like('s.phoneNumber', ':filter')
                 )
             );
             $qb->setParameter('filter', '%' . $filter . '%');
         }
 
         if ($sortBy) {
-            $qb->addOrderBy('p.' . $sortBy, $sortOrder);
+            $qb->addOrderBy('s.' . $sortBy, $sortOrder);
         }
 
         return $qb;

@@ -16,14 +16,8 @@ class CreateEmployeeSchema extends EditUserModelSchema
     public string $password;
 
     /**
-     * @var int
-     * @Assert\NotBlank(message="Code is required")
-     * @Assert\GreaterThan(
-     *     value = 0
-     * )
-     * @Assert\LessThan(
-     *     value = 10000
-     * )
+     * @var string
+     * @Assert\NotBlank(message="Store is required")
      */
-    public int $code;
+    public string $storeId;
 }

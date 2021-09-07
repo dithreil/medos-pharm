@@ -7,9 +7,9 @@ namespace App\Controller\Admin\Api;
 use App\Exception\ApiException;
 use App\Exception\AppException;
 use App\Exception\ConstraintsValidationException;
-use App\Manager\ProducerManager;
-use App\Model\Producer\CreateProducerSchema;
-use App\Serializer\Normalizer\ProducerNormalizer;
+use App\Manager\SupplierManager;
+use App\Model\Supplier\CreateSupplierSchema;
+use App\Serializer\Normalizer\SupplierNormalizer;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,14 +18,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ProducerController extends AbstractController
+class SupplierController extends AbstractController
 {
     /**
-     * @Route(path="", methods={"GET"}, name="app.admin.api.producers.get_list")
+     * @Route(path="", methods={"GET"}, name="app.admin.api.suppliers.get_list")
      * @OA\Get(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Список производителей",
-     *     description="Получение списка производителей",
+     *     tags={"Админка. Управление поставщиками"},
+     *     summary="Список поставщиков",
+     *     description="Получение списка поставщиков",
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -47,7 +47,7 @@ class ProducerController extends AbstractController
      *     @OA\Parameter(
      *         name="filter",
      *         in="query",
-     *         description="Фильтр для названия, страны",
+     *         description="Фильтр для названия, адреса, телефона",
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -71,11 +71,11 @@ class ProducerController extends AbstractController
      *     )
      * )
      * @param Request $request
-     * @param ProducerManager $manager
+     * @param SupplierManager $manager
      * @return JsonResponse
      * @throws ApiException
      */
-    public function listAction(Request $request, ProducerManager $manager): JsonResponse
+    public function listAction(Request $request, SupplierManager $manager): JsonResponse
     {
         try {
             $filters = $request->query->all();
@@ -84,24 +84,26 @@ class ProducerController extends AbstractController
             throw new ApiException($e);
         }
 
-        return $this->json($payload, Response::HTTP_OK, [], [ProducerNormalizer::CONTEXT_TYPE_KEY => ProducerNormalizer::TYPE_IN_LIST]);
+        return $this->json($payload, Response::HTTP_OK, [], [SupplierNormalizer::CONTEXT_TYPE_KEY => SupplierNormalizer::TYPE_IN_LIST]);
     }
 
     /**
-     * @Route(path="", methods={"POST"}, name="app.admin.api.producers.post_create")
+     * @Route(path="", methods={"POST"}, name="app.admin.api.suppliers.post_create")
      * @OA\Post(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Создание производителя",
-     *     description="Создание нового производителя",
+     *     tags={"Админка. Управление поставщиками"},
+     *     summary="Создание поставщиками",
+     *     description="Создание нового поставщика",
      *     @OA\RequestBody(
-     *         description="Данные производителя",
+     *         description="Данные поставщика",
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *             @OA\Property(property="shortName", description="Короткое название производителя", type="string"),
-     *             @OA\Property(property="fullName", description="Полное название производителя", type="string"),
-     *             @OA\Property(property="country", description="Страна производителя", type="string")
+     *             @OA\Property(property="name", description="Название поставщика", type="string"),
+     *             @OA\Property(property="address", description="Адрес поставщика", type="string"),
+     *             @OA\Property(property="email", description="Электронный адрес", type="string", nullable=true),
+     *             @OA\Property(property="phoneNumber", description="Номер телефона", type="string", nullable=true),
+     *             @OA\Property(property="information", description="Доп. информация", type="string", nullable=true),
      *             )
      *         )
      *     ),
@@ -110,9 +112,11 @@ class ProducerController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="shortName", example="Bayer", type="string"),
-     *             @OA\Property(property="fullName", example="Bayer GBMH", type="string"),
-     *             @OA\Property(property="country", example="Германия", type="string"),
+     *             @OA\Property(property="name", type="string", example="Мед-стиль"),
+     *             @OA\Property(property="address", type="string", example="Донецк, ул. Ватутина, 49"),
+     *             @OA\Property(property="email", type="string", nullable=true, example="tokov@medstyle.ru"),
+     *             @OA\Property(property="phoneNumber", type="string", nullable=true, example="9284523412"),
+     *             @OA\Property(property="information", type="string", nullable=true, example="Вторник - выходной"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *         )
@@ -122,27 +126,29 @@ class ProducerController extends AbstractController
      *         description="Ошибка валидации"
      *     )
      * )
-     * @param ProducerManager $manager
+     * @param SupplierManager $manager
      * @param ValidatorInterface $validator
-     * @param CreateProducerSchema $producerSchema
+     * @param CreateSupplierSchema $supplierSchema
      * @return JsonResponse
      */
     public function createAction(
-        ProducerManager $manager,
+        SupplierManager $manager,
         ValidatorInterface $validator,
-        CreateProducerSchema $producerSchema
+        CreateSupplierSchema $supplierSchema
     ): JsonResponse {
         try {
-            $errors = $validator->validate($producerSchema);
+            $errors = $validator->validate($supplierSchema);
 
             if ($errors->count() > 0) {
                 throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
             }
 
             $producer = $manager->create(
-                $producerSchema->shortName,
-                $producerSchema->fullName,
-                $producerSchema->country
+                $supplierSchema->name,
+                $supplierSchema->address,
+                $supplierSchema->email,
+                $supplierSchema->phoneNumber,
+                $supplierSchema->information
             );
         } catch (AppException $e) {
             throw new ApiException($e);
@@ -152,29 +158,31 @@ class ProducerController extends AbstractController
     }
 
     /**
-     * @Route(path="/{id}", methods={"PUT"}, name="app.admin.api.producers.put_edit")
+     * @Route(path="/{id}", methods={"PUT"}, name="app.admin.api.supplier.put_edit")
      * @OA\Put(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Редактирование производителя",
-     *     description="Редактирование производителя",
+     *     tags={"Админка. Управление поставщиками"},
+     *     summary="Редактирование поставщика",
+     *     description="Редактирование поставщика",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="id производителя",
+     *         description="id поставщика",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
      *         )
      *     ),
      *     @OA\RequestBody(
-     *         description="Данные производителя",
+     *         description="Данные поставщика",
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *             @OA\Property(property="shortName", description="Короткое название производителя", type="string"),
-     *             @OA\Property(property="fullName", description="Полное название производителя", type="string"),
-     *             @OA\Property(property="country", description="Страна производителя", type="string")
+     *             @OA\Property(property="name", description="Название поставщика", type="string"),
+     *             @OA\Property(property="address", description="Адрес поставщика", type="string"),
+     *             @OA\Property(property="email", description="Электронный адрес", type="string", nullable=true),
+     *             @OA\Property(property="phoneNumber", description="Номер телефона", type="string", nullable=true),
+     *             @OA\Property(property="information", description="Доп. информация", type="string", nullable=true),
      *             )
      *         )
      *     ),
@@ -183,9 +191,11 @@ class ProducerController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="shortName", example="Bayer", type="string"),
-     *             @OA\Property(property="fullName", example="Bayer GBMH", type="string"),
-     *             @OA\Property(property="country", example="Германия", type="string"),
+     *             @OA\Property(property="name", type="string", example="Мед-стиль"),
+     *             @OA\Property(property="address", type="string", example="Донецк, ул. Ватутина, 49"),
+     *             @OA\Property(property="email", type="string", nullable=true, example="tokov@medstyle.ru"),
+     *             @OA\Property(property="phoneNumber", type="string", nullable=true, example="9284523412"),
+     *             @OA\Property(property="information", type="string", nullable=true, example="Вторник - выходной"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *         )
@@ -195,20 +205,20 @@ class ProducerController extends AbstractController
      *         description="Ошибка валидации"
      *     )
      * )
-     * @param ProducerManager $manager
+     * @param SupplierManager $manager
      * @param ValidatorInterface $validator
-     * @param CreateProducerSchema $producerSchema
+     * @param CreateSupplierSchema $supplierSchema
      * @param string $id
      * @return JsonResponse
      */
     public function editAction(
-        ProducerManager $manager,
+        SupplierManager $manager,
         ValidatorInterface $validator,
-        CreateProducerSchema $producerSchema,
+        CreateSupplierSchema $supplierSchema,
         string $id
     ): JsonResponse {
         try {
-            $errors = $validator->validate($producerSchema);
+            $errors = $validator->validate($supplierSchema);
 
             if ($errors->count() > 0) {
                 throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
@@ -216,9 +226,11 @@ class ProducerController extends AbstractController
 
             $producer = $manager->edit(
                 $id,
-                $producerSchema->shortName,
-                $producerSchema->fullName,
-                $producerSchema->country
+                $supplierSchema->name,
+                $supplierSchema->address,
+                $supplierSchema->email,
+                $supplierSchema->phoneNumber,
+                $supplierSchema->information
             );
         } catch (AppException $e) {
             throw new ApiException($e);
@@ -228,15 +240,15 @@ class ProducerController extends AbstractController
     }
 
     /**
-     * @Route(path="/{id}", methods={"GET"}, name="app.admin.api.producers.get_details")
+     * @Route(path="/{id}", methods={"GET"}, name="app.admin.api.supplier.get_details")
      * @OA\Get(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Просмотр одного производителя",
-     *     description="Данные одного производителя",
+     *     tags={"Админка. Управление поставщиками"},
+     *     summary="Просмотр одного поставщика",
+     *     description="Данные одного поставщика",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="id производителя",
+     *         description="id поставщика",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
@@ -247,23 +259,25 @@ class ProducerController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="shortName", example="Bayer", type="string"),
-     *             @OA\Property(property="fullName", example="Bayer GBMH", type="string"),
-     *             @OA\Property(property="country", example="Германия", type="string"),
+     *             @OA\Property(property="name", type="string", example="Мед-стиль"),
+     *             @OA\Property(property="address", type="string", example="Донецк, ул. Ватутина, 49"),
+     *             @OA\Property(property="email", type="string", nullable=true, example="tokov@medstyle.ru"),
+     *             @OA\Property(property="phoneNumber", type="string", nullable=true, example="9284523412"),
+     *             @OA\Property(property="information", type="string", nullable=true, example="Вторник - выходной"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Производитель не найден"
+     *         description="Поставщик не найден"
      *     )
      * )
-     * @param ProducerManager $manager
+     * @param SupplierManager $manager
      * @param string $id
      * @return JsonResponse
      */
-    public function detailsAction(string $id, ProducerManager $manager): JsonResponse
+    public function detailsAction(string $id, SupplierManager $manager): JsonResponse
     {
         try {
             $payload = $manager->get($id);

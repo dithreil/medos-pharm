@@ -5,7 +5,9 @@ declare(strict_types=1);
 namespace App\Command;
 
 use App\DataProvider\UserDataProvider;
+use App\Entity\Store;
 use App\Manager\EmployeeManager;
+use App\Manager\StoreManager;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
@@ -20,15 +22,23 @@ class CreateAdminUserCommand extends Command
     private EmployeeManager $employeeManager;
 
     /**
+     * @var StoreManager
+     */
+    private StoreManager $storeManager;
+
+    /**
      * @param EmployeeManager $employeeManager
+     * @param StoreManager $storeManager
      * @param string|null $name
      */
     public function __construct(
         EmployeeManager $employeeManager,
+        StoreManager $storeManager,
         ?string $name = null
     ) {
         parent::__construct($name);
         $this->employeeManager = $employeeManager;
+        $this->storeManager = $storeManager;
     }
 
     protected function configure(): void
@@ -101,10 +111,11 @@ class CreateAdminUserCommand extends Command
         $email = $input->getArgument('email');
         $phoneNumber = $input->getArgument('phoneNumber');
         $password = $input->getArgument('password');
-
+        $store = $this->storeManager->findByName('Main office');
 
         try {
             $this->employeeManager->create(
+                $store->getId(),
                 $email,
                 'Админ',
                 'Админ',

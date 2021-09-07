@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Model\Producer;
 
+use App\Model\AbstractApiSchema;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateProducerSchema
+class CreateProducerSchema extends AbstractApiSchema
 {
     /**
      * @var string

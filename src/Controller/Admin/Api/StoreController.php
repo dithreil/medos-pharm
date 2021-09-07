@@ -7,9 +7,9 @@ namespace App\Controller\Admin\Api;
 use App\Exception\ApiException;
 use App\Exception\AppException;
 use App\Exception\ConstraintsValidationException;
-use App\Manager\ProducerManager;
-use App\Model\Producer\CreateProducerSchema;
-use App\Serializer\Normalizer\ProducerNormalizer;
+use App\Manager\StoreManager;
+use App\Model\Store\CreateStoreSchema;
+use App\Serializer\Normalizer\StoreNormalizer;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -18,14 +18,14 @@ use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
-class ProducerController extends AbstractController
+class StoreController extends AbstractController
 {
     /**
-     * @Route(path="", methods={"GET"}, name="app.admin.api.producers.get_list")
+     * @Route(path="", methods={"GET"}, name="app.admin.api.stores.get_list")
      * @OA\Get(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Список производителей",
-     *     description="Получение списка производителей",
+     *     tags={"Админка. Управление торговыми точками"},
+     *     summary="Список торговых точек",
+     *     description="Получение списка торговых точек",
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -47,7 +47,7 @@ class ProducerController extends AbstractController
      *     @OA\Parameter(
      *         name="filter",
      *         in="query",
-     *         description="Фильтр для названия, страны",
+     *         description="Фильтр для названия, адреса",
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -71,11 +71,11 @@ class ProducerController extends AbstractController
      *     )
      * )
      * @param Request $request
-     * @param ProducerManager $manager
+     * @param StoreManager $manager
      * @return JsonResponse
      * @throws ApiException
      */
-    public function listAction(Request $request, ProducerManager $manager): JsonResponse
+    public function listAction(Request $request, StoreManager $manager): JsonResponse
     {
         try {
             $filters = $request->query->all();
@@ -84,24 +84,24 @@ class ProducerController extends AbstractController
             throw new ApiException($e);
         }
 
-        return $this->json($payload, Response::HTTP_OK, [], [ProducerNormalizer::CONTEXT_TYPE_KEY => ProducerNormalizer::TYPE_IN_LIST]);
+        return $this->json($payload, Response::HTTP_OK, [], [StoreNormalizer::CONTEXT_TYPE_KEY => StoreNormalizer::TYPE_IN_LIST]);
     }
 
     /**
-     * @Route(path="", methods={"POST"}, name="app.admin.api.producers.post_create")
+     * @Route(path="", methods={"POST"}, name="app.admin.api.stores.post_create")
      * @OA\Post(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Создание производителя",
-     *     description="Создание нового производителя",
+     *     tags={"Админка. Управление торговыми точками"},
+     *     summary="Создание торговой точки",
+     *     description="Создание новой торговой точки",
      *     @OA\RequestBody(
-     *         description="Данные производителя",
+     *         description="Данные торговой точки",
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *             @OA\Property(property="shortName", description="Короткое название производителя", type="string"),
-     *             @OA\Property(property="fullName", description="Полное название производителя", type="string"),
-     *             @OA\Property(property="country", description="Страна производителя", type="string")
+     *             @OA\Property(property="name", description="Название аптеки", type="string"),
+     *             @OA\Property(property="address", description="Адрес аптеки", type="string"),
+     *             @OA\Property(property="description", description="Описание аптеки", type="string", nullable=true)
      *             )
      *         )
      *     ),
@@ -110,9 +110,9 @@ class ProducerController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="shortName", example="Bayer", type="string"),
-     *             @OA\Property(property="fullName", example="Bayer GBMH", type="string"),
-     *             @OA\Property(property="country", example="Германия", type="string"),
+     *             @OA\Property(property="name", type="string", example="Аптека Медос №53"),
+     *             @OA\Property(property="address", type="string", example="г. Донецк, ул. Ватутина 153б"),
+     *             @OA\Property(property="description", nullable=true, example="При больнице", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *         )
@@ -122,27 +122,27 @@ class ProducerController extends AbstractController
      *         description="Ошибка валидации"
      *     )
      * )
-     * @param ProducerManager $manager
+     * @param StoreManager $manager
      * @param ValidatorInterface $validator
-     * @param CreateProducerSchema $producerSchema
+     * @param CreateStoreSchema $storeSchema
      * @return JsonResponse
      */
     public function createAction(
-        ProducerManager $manager,
+        StoreManager $manager,
         ValidatorInterface $validator,
-        CreateProducerSchema $producerSchema
+        CreateStoreSchema $storeSchema
     ): JsonResponse {
         try {
-            $errors = $validator->validate($producerSchema);
+            $errors = $validator->validate($storeSchema);
 
             if ($errors->count() > 0) {
                 throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
             }
 
             $producer = $manager->create(
-                $producerSchema->shortName,
-                $producerSchema->fullName,
-                $producerSchema->country
+                $storeSchema->name,
+                $storeSchema->address,
+                $storeSchema->description
             );
         } catch (AppException $e) {
             throw new ApiException($e);
@@ -152,29 +152,29 @@ class ProducerController extends AbstractController
     }
 
     /**
-     * @Route(path="/{id}", methods={"PUT"}, name="app.admin.api.producers.put_edit")
+     * @Route(path="/{id}", methods={"PUT"}, name="app.admin.api.stores.put_edit")
      * @OA\Put(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Редактирование производителя",
-     *     description="Редактирование производителя",
+     *     tags={"Админка. Управление торговыми точками"},
+     *     summary="Редактирование торговой точки",
+     *     description="Редактирование торговой точки",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="id производителя",
+     *         description="id торговой точки",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
      *         )
      *     ),
      *     @OA\RequestBody(
-     *         description="Данные производителя",
+     *         description="Данные торговой точки",
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *             @OA\Property(property="shortName", description="Короткое название производителя", type="string"),
-     *             @OA\Property(property="fullName", description="Полное название производителя", type="string"),
-     *             @OA\Property(property="country", description="Страна производителя", type="string")
+     *             @OA\Property(property="name", description="Название аптеки", type="string"),
+     *             @OA\Property(property="address", description="Адрес аптеки", type="string"),
+     *             @OA\Property(property="description", description="Описание аптеки", type="string", nullable=true)
      *             )
      *         )
      *     ),
@@ -183,9 +183,9 @@ class ProducerController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="shortName", example="Bayer", type="string"),
-     *             @OA\Property(property="fullName", example="Bayer GBMH", type="string"),
-     *             @OA\Property(property="country", example="Германия", type="string"),
+     *             @OA\Property(property="name", example="Аптека Медос №53", type="string"),
+     *             @OA\Property(property="address", example="г. Донецк, ул. Ватутина 153б", type="string"),
+     *             @OA\Property(property="description", example="При больнице", type="string", nullable=true),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *         )
@@ -195,20 +195,20 @@ class ProducerController extends AbstractController
      *         description="Ошибка валидации"
      *     )
      * )
-     * @param ProducerManager $manager
+     * @param StoreManager $manager
      * @param ValidatorInterface $validator
-     * @param CreateProducerSchema $producerSchema
+     * @param CreateStoreSchema $storeSchema
      * @param string $id
      * @return JsonResponse
      */
     public function editAction(
-        ProducerManager $manager,
+        StoreManager $manager,
         ValidatorInterface $validator,
-        CreateProducerSchema $producerSchema,
+        CreateStoreSchema $storeSchema,
         string $id
     ): JsonResponse {
         try {
-            $errors = $validator->validate($producerSchema);
+            $errors = $validator->validate($storeSchema);
 
             if ($errors->count() > 0) {
                 throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
@@ -216,9 +216,9 @@ class ProducerController extends AbstractController
 
             $producer = $manager->edit(
                 $id,
-                $producerSchema->shortName,
-                $producerSchema->fullName,
-                $producerSchema->country
+                $storeSchema->name,
+                $storeSchema->address,
+                $storeSchema->description
             );
         } catch (AppException $e) {
             throw new ApiException($e);
@@ -228,15 +228,15 @@ class ProducerController extends AbstractController
     }
 
     /**
-     * @Route(path="/{id}", methods={"GET"}, name="app.admin.api.producers.get_details")
+     * @Route(path="/{id}", methods={"GET"}, name="app.admin.api.stores.get_details")
      * @OA\Get(
-     *     tags={"Админка. Управление производителями"},
-     *     summary="Просмотр одного производителя",
-     *     description="Данные одного производителя",
+     *     tags={"Админка. Управление торговыми точками"},
+     *     summary="Просмотр одной торговой точки",
+     *     description="Данные одной торговой точки",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="id производителя",
+     *         description="id торговой точки",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
@@ -247,23 +247,23 @@ class ProducerController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="shortName", example="Bayer", type="string"),
-     *             @OA\Property(property="fullName", example="Bayer GBMH", type="string"),
-     *             @OA\Property(property="country", example="Германия", type="string"),
+     *             @OA\Property(property="name", example="Аптека Медос №53", type="string"),
+     *             @OA\Property(property="address", example="г. Донецк, ул. Ватутина 153б", type="string"),
+     *             @OA\Property(property="description", example="При больнице", type="string", nullable=true),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *         )
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="Производитель не найден"
+     *         description="Торговая точка не найдена"
      *     )
      * )
-     * @param ProducerManager $manager
+     * @param StoreManager $manager
      * @param string $id
      * @return JsonResponse
      */
-    public function detailsAction(string $id, ProducerManager $manager): JsonResponse
+    public function detailsAction(string $id, StoreManager $manager): JsonResponse
     {
         try {
             $payload = $manager->get($id);

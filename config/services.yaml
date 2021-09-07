@@ -45,7 +45,3 @@ services:
     App\EventListener\LogoutEventListener:
         tags:
             - { name: kernel.event_subscriber, dispatcher: security.event_dispatcher.main }
-
-    App\EventListener\OrderHistoryEventListener:
-        tags:
-            - { name: doctrine.event_listener, event: onFlush }

@@ -19,6 +19,13 @@ use Doctrine\ORM\Mapping as ORM;
 class Employee extends User
 {
     /**
+     * @var Store
+     * @ORM\ManyToOne(targetEntity=Store::class, inversedBy="employees")
+     */
+    private Store $store;
+
+    /**
+     * @param Store $store
      * @param string $email
      * @param string $lastName
      * @param string $firstName
@@ -27,6 +34,7 @@ class Employee extends User
      * @param array $roles
      */
     public function __construct(
+        Store $store,
         string $email,
         string $lastName,
         string $firstName,
@@ -35,6 +43,23 @@ class Employee extends User
         array $roles
     ) {
         parent::__construct($email, $lastName, $firstName, $patronymic, $phoneNumber, $roles);
+        $this->store = $store;
+    }
+
+    /**
+     * @return Store
+     */
+    public function getStore(): Store
+    {
+        return $this->store;
+    }
+
+    /**
+     * @param Store $store
+     */
+    public function setStore(Store $store): void
+    {
+        $this->store = $store;
     }
 
     /**

@@ -4,13 +4,12 @@
             Пользователи
         </div>
         <ul class="sidebar-menu">
-            <!--<li class="sidebar-menu__item">
+            <li class="sidebar-menu__item">
                 <span class="material-icons">photo</span>
-                <router-link :to="{name: 'SpecialityList'}">
-                    {{$loc('specialityList')}}
+                <router-link :to="{name: 'ProducerList'}">
+                    Производители
                 </router-link>
             </li>
-            -->
         </ul>
     </div>
 </template>

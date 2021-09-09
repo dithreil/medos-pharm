@@ -11,6 +11,7 @@ class DateTimeUtils
 {
     public const DEFAULT_TIMEZONE = 'Europe/Moscow';
     public const FORMAT_DEFAULT = 'd.m.Y H:i:s';
+    public const FORMAT_EXPIRE = 'm/Y';
     public const FORMAT_DATE = 'd.m.Y';
     public const FORMAT_FOR_PATH = 'Y-m-d';
     public const FORMAT_TIME = 'H:i';

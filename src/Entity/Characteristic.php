@@ -64,7 +64,7 @@ class Characteristic
 
     /**
      * @var \DateTimeImmutable|null
-     * @ORM\Column(name="delete_time", type="datetime_immutable")
+     * @ORM\Column(name="delete_time", type="datetime_immutable", nullable=true)
      */
     private ?\DateTimeImmutable $deleteTime;
 

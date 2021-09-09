@@ -35,6 +35,7 @@ class ProducerNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'shortName' => $object->getShortName(),
+                    'fullName' => $object->getFullName(),
                     'country' => $object->getCountry()
                 ];
                 break;

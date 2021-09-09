@@ -8,7 +8,7 @@
             >
                 <q-card-section>
                     <div class="text-h6">
-                        {{$loc('producerEdit')}}
+                       Редактировать производителя
                     </div>
                 </q-card-section>
                 <q-card-section>
@@ -61,59 +61,69 @@
     </q-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import {mapActions} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
+import {Component, Prop, Ref, Vue} from 'vue-property-decorator';
+import {IProducerDetails} from '../../interfaces/producer';
+import {QDialog, QForm} from 'quasar';
+import {producerCreate} from '../../models/CreateModels';
+import {IServerResponse} from '../../interfaces/request-params';
 
-
-export default {
-    name: 'ProducerEdit',
-    props: {
-        producer: {
-            type: Object,
-            required: true,
-        },
-    },
-    data() {
-        return {
-            model: null,
-        };
-    },
-    async created() {
-        this.model = JSON.parse(JSON.stringify(this.producer));
-    },
+@Component({
     methods: {
         ...mapActions({
+            getProducerDetails: 'producer/getProducerDetails',
             editProducerData: 'producer/editProducerData',
         }),
         ...validationHelpers,
-        isFormInvalid() {
-            return this.$refs.form.validate();
-        },
-        show() {
-            this.$refs.dialog.show();
-        },
-        hide() {
-            this.$refs.dialog.hide();
-        },
-        onDialogHide() {
-            this.$emit('hide');
-        },
-        onCancelClick() {
-            this.hide();
-        },
-        async onOkClick() {
-            const isValid = await this.isFormInvalid();
-            if (!isValid) return;
-
-            try {
-                await this.editProducerData({id: this.model.id, payload: this.model});
-                this.$emit('ok');
-                this.hide();
-            } catch (error) {
-                console.log(error);
-            }
-        },
     },
+})
+export default class ProducerEdit extends Vue {
+  protected editProducerData!: ({id, payload}: {id: string, payload: IProducerDetails}) => any;
+  protected getProducerDetails!: (id: string) => IServerResponse;
+
+
+  @Prop({type: String, required: true}) readonly producerId!: string;
+
+  @Ref('dialog') readonly dialog!: QDialog;
+  @Ref('form') readonly form!: QForm;
+
+  protected model: IProducerDetails = JSON.parse(JSON.stringify(producerCreate));
+
+  async mounted() {
+      const response = await this.getProducerDetails(this.producerId);
+
+      console.log(response);
+      this.model = response.data;
+  };
+
+  isFormInvalid() {
+      return this.form.validate();
+  };
+  show() {
+      this.dialog.show();
+  };
+  hide() {
+      this.dialog.hide();
+  };
+  onDialogHide() {
+      this.$emit('hide');
+  };
+  onCancelClick() {
+      this.hide();
+  };
+  async onOkClick() {
+      const isValid = await this.isFormInvalid();
+      if (!isValid) return;
+
+      try {
+          await this.editProducerData({id: this.model.id, payload: this.model});
+          this.$emit('ok');
+          this.hide();
+      } catch (error) {
+          console.log(error);
+      }
+  };
 };
 </script>

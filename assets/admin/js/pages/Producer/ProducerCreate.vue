@@ -62,54 +62,56 @@
     </q-dialog>
 </template>
 
-<script>
+<script lang="ts">
 import {mapActions} from 'vuex';
-import CreateProducerModel from '../../models/CreateProducerModel';
 import * as validationHelpers from '../../validation/helpers';
+import {Component, Ref, Vue} from 'vue-property-decorator';
+import {IProducerDetails} from '../../interfaces/producer';
+import {IProducer} from '../../interfaces/producer';
+import {QDialog, QForm} from 'quasar';
+import {producerCreate} from '../../models/CreateModels';
 
-export default {
-    name: 'ProducerCreate',
-    data() {
-        return {
-            model: null,
-        };
-    },
-
-    created() {
-        this.model = JSON.parse(JSON.stringify(CreateProducerModel));
-    },
+@Component({
     methods: {
         ...mapActions({
             createProducer: 'producer/createProducer',
         }),
         ...validationHelpers,
-        isFormInvalid() {
-            return this.$refs.form.validate();
-        },
-        show() {
-            this.$refs.dialog.show();
-        },
-        hide() {
-            this.$refs.dialog.hide();
-        },
-        onDialogHide() {
-            this.$emit('hide');
-        },
-        onCancelClick() {
-            this.hide();
-        },
-        async onOkClick() {
-            const isValid = await this.isFormInvalid();
-            if (!isValid) return;
-
-            try {
-                await this.createProducer({payload: {...this.model}});
-                this.$emit('ok');
-                this.hide();
-            } catch (error) {
-                console.log(error);
-            }
-        },
     },
-};
+})
+export default class ProducerEdit extends Vue {
+  protected createProducer!: ({payload}: {payload: IProducer}) => any;
+
+  @Ref('dialog') readonly dialog!: QDialog;
+  @Ref('form') readonly form!: QForm;
+
+  protected model: IProducerDetails = JSON.parse(JSON.stringify(producerCreate));
+  isFormInvalid() {
+      return this.form.validate();
+  };
+  show() {
+      this.dialog.show();
+  };
+  hide() {
+      this.dialog.hide();
+  };
+  onDialogHide() {
+      this.$emit('hide');
+  };
+  onCancelClick() {
+      this.hide();
+  };
+  async onOkClick() {
+      const isValid = await this.isFormInvalid();
+      if (!isValid) return;
+
+      try {
+          await this.createProducer({payload: {...this.model}});
+          this.$emit('ok');
+          this.hide();
+      } catch (error) {
+          console.log(error);
+      }
+  };
+}
 </script>

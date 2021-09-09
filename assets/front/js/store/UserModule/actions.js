@@ -8,8 +8,8 @@ export default {
             .then((response) => {
                 const userData = {...response.data};
 
-                if (!!userData && Object.keys(userData).length > 0) {
-                    if (userData.phoneNumber && userData.phoneNumber.charAt(0) === '7') {
+                if (!!userData && 0 < Object.keys(userData).length) {
+                    if (userData.phoneNumber && '7' === userData.phoneNumber.charAt(0)) {
                         userData.phoneNumber = userData.phoneNumber.substring(1);
                     }
 
@@ -28,11 +28,11 @@ export default {
     saveUserData({dispatch}, payload) {
         return requests.put(apiConstants.USER.DEFAULT, payload)
             .then((response) => {
-                if (response.status === 204) {
+                if (204 === response.status) {
                     notifizer.success('Ваши данные обновлены успешно');
                     dispatch('getUserData')
                         .then((res) => {
-                            if (res.status === 200) {
+                            if (200 === res.status) {
                                 router.replace({name: 'ClientInfo'});
                             }
                         });

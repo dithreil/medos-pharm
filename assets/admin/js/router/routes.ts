@@ -1,4 +1,6 @@
-export default [
+import {RouteConfig} from 'vue-router';
+
+const routes: RouteConfig[] = [
     {
         path: '/',
         name: 'Main',
@@ -10,3 +12,5 @@ export default [
         component: () => import('../pages/Producer/ProducerList.vue'),
     },
 ];
+
+export default routes;

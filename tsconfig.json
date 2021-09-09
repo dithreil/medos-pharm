@@ -1,0 +1,24 @@
+{
+  "compilerOptions": {
+    "allowJs": true,
+    // `baseUrl` must be placed on the extending configuration in devland, or paths won't be recognized
+    "esModuleInterop": true,
+    "module": "esnext",
+    "moduleResolution": "node",
+    // Needed to address https://github.com/quasarframework/app-extension-typescript/issues/36
+    "resolveJsonModule": true,
+    "sourceMap": true,
+    "strict": true,
+    "experimentalDecorators": true,
+    "target": "es2019",
+    // Quasar-defined webpack aliases
+    // Forces quasar typings to be included, even if they aren't referenced directly
+    // Removing this would break `quasar/wrappers` imports if `quasar`
+    //  isn't referenced anywhere, because those typings are declared
+    //  into `@quasar/app` which is imported by `quasar` typings
+    "types": ["quasar"]
+  },
+  // Needed to avoid files copied into 'dist' folder (eg. a `.d.ts` file inside `assets-ssr` folder)
+  // to be evaluated by TS when their original files has been updated
+  "exclude": ["/dist", ".quasar", "node_modules", "vendor"]
+}

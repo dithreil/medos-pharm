@@ -18,21 +18,17 @@
     </div>
 </template>
 
-<script>
-import Topbar from './components/Topbar';
-import Sidebar from './components/Sidebar';
-export default {
-    name: 'App',
-    components: {Sidebar, Topbar},
-    data() {
-        return {
-            isActive: true,
-        };
-    },
-    methods: {
-        moveSiedeBar(isOpen) {
-            this.isActive = isOpen;
-        },
-    },
+<script lang="ts">
+
+import Topbar from './components/Topbar.vue';
+import Sidebar from './components/Sidebar.vue';
+import {Component, Vue} from 'vue-property-decorator';
+
+@Component({components: {Sidebar, Topbar}})
+export default class App extends Vue {
+    isActive = true;
+    moveSiedeBar(isOpen: boolean) {
+        this.isActive = isOpen;
+    }
 };
 </script>

@@ -3,12 +3,12 @@
         <div class="flex items-center no-wrap">
             <div class="sidebar-burger">
                 <span
-                    @click="toogleSiedeBar"
+                    @click="toggleSideBar"
                     v-if="isOpen"
                     class="material-icons text-primary opened">menu_open
                 </span>
                 <span
-                    @click="toogleSiedeBar"
+                    @click="toggleSideBar"
                     v-else
                     class="material-icons text-primary opened">menu
                 </span>
@@ -31,19 +31,18 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Topbar',
-    data() {
-        return {
-            isOpen: true,
-        };
-    },
-    methods: {
-        toogleSiedeBar() {
-            this.isOpen = !this.isOpen;
-            this.$emit('moveSiedeBar', this.isOpen);
-        },
-    },
+<script lang="ts">
+import {Component, Prop, Vue} from 'vue-property-decorator';
+
+@Component
+export default class Topbar extends Vue {
+  @Prop({type: Boolean, required: false}) readonly isActive!: boolean;
+
+  private isOpen = true;
+
+  toggleSideBar() {
+      this.isOpen = !this.isOpen;
+      this.$emit('moveSiedeBar', this.isOpen);
+  }
 };
 </script>

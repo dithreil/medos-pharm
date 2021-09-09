@@ -89,11 +89,11 @@ export default {
     },
     computed: {
         isForEmployee() {
-            return this.userType === 'employee';
+            return 'employee' === this.userType;
         },
     },
     created() {
-        if (['client', 'employee'].indexOf(this.userType) === -1) {
+        if (-1 === ['client', 'employee'].indexOf(this.userType)) {
             this.$router.push({name: 'Authorization', params: {userType: 'client'}});
         }
     },

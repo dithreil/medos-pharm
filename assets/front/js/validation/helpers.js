@@ -1,5 +1,5 @@
 const ruLettersRule = (value) => {
-    if (!value || value === '') {
+    if (!value || '' === value) {
         return true;
     }
 
@@ -7,7 +7,7 @@ const ruLettersRule = (value) => {
 };
 
 const noCyrillicRule = (value) => {
-    if (!value || value === '') {
+    if (!value || '' === value) {
         return true;
     }
 
@@ -25,7 +25,7 @@ const countDigitsRule = (num) => {
     let n = num;
     let count = 0;
 
-    for (let i = 0; n > 1; i++) {
+    for (let i = 0; 1 < n; i++) {
         n /= 10;
         count++;
     }

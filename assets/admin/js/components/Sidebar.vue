@@ -14,14 +14,13 @@
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Sidebar',
-    props: {
-        isActive: {
-            type: Boolean,
-        },
-    },
+<script lang="ts">
+import {Component, Prop, Vue} from 'vue-property-decorator';
+
+
+@Component
+export default class Sidebar extends Vue {
+  @Prop({type: Boolean, required: false}) readonly isActive!: boolean;
 };
 </script>
 

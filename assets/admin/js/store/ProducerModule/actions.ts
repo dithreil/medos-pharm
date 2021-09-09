@@ -1,7 +1,12 @@
 import {requests, apiConstants} from '../../api';
 import * as notifizer from '../../utils/notifizer';
+import {ActionTree} from 'vuex';
+import {IProducerInterface} from './state';
+import {StateInterface} from '../index';
 
-export default {
+
+const actions: ActionTree<IProducerInterface, StateInterface> = {
+
     getProducerList({commit, getters}) {
         return requests.get(apiConstants.PRODUCER.DEFAULT, getters.producerRequestParams)
             .then((response) => {
@@ -60,3 +65,4 @@ export default {
         return dispatch('getProducerList');
     },
 };
+export default actions;

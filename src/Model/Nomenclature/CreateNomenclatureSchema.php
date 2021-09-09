@@ -4,9 +4,10 @@ declare(strict_types=1);
 
 namespace App\Model\Nomenclature;
 
+use App\Model\AbstractApiSchema;
 use Symfony\Component\Validator\Constraints as Assert;
 
-class CreateNomenclatureSchema
+class CreateNomenclatureSchema extends AbstractApiSchema
 {
     /**
      * @var string
@@ -26,7 +27,7 @@ class CreateNomenclatureSchema
 
     /**
      * @var string
-     * @Assert\NotBlank(message="Medical form type is required")
+     * @Assert\NotBlank(message="Medical form is required")
      */
     public string $medicalForm;
 

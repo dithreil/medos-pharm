@@ -4,13 +4,13 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Api;
 
-use App\DataProvider\NomenclatureDataProvider;
 use App\Exception\ApiException;
 use App\Exception\AppException;
 use App\Exception\ConstraintsValidationException;
+use App\Manager\CharacteristicManager;
 use App\Manager\NomenclatureManager;
-use App\Model\Nomenclature\CreateNomenclatureSchema;
-use App\Serializer\Normalizer\NomenclatureNormalizer;
+use App\Model\Characteristic\CreateCharacteristicSchema;
+use App\Serializer\Normalizer\CharacteristicNormalizer;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -20,16 +20,16 @@ use Symfony\Component\Routing\Annotation\Route;
 use Symfony\Component\Validator\Validator\ValidatorInterface;
 
 /**
- * @Route(path="/nomenclatures")
+ * @Route(path="/characteristics")
  */
-class NomenclatureController extends AbstractController
+class CharacteristicController extends AbstractController
 {
     /**
-     * @Route(path="", methods={"GET"}, name="app.admin.api.nomenclatures.get_list")
+     * @Route(path="", methods={"GET"}, name="app.admin.api.characteristics.get_list")
      * @OA\Get(
-     *     tags={"Админка. Управление номенклатурой"},
-     *     summary="Список номенклатуры",
-     *     description="Получение списка номенклатуры",
+     *     tags={"Админка. Управление характеристиками"},
+     *     summary="Список характеристик",
+     *     description="Получение списка характеристик",
      *     @OA\Parameter(
      *         name="page",
      *         in="query",
@@ -51,7 +51,7 @@ class NomenclatureController extends AbstractController
      *     @OA\Parameter(
      *         name="filter",
      *         in="query",
-     *         description="Фильтр для названия, производителя",
+     *         description="Фильтр для серии",
      *         @OA\Schema(
      *             type="string"
      *         )
@@ -88,56 +88,24 @@ class NomenclatureController extends AbstractController
             throw new ApiException($e);
         }
 
-        return $this->json($payload, Response::HTTP_OK, [], [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_LIST]);
+        return $this->json($payload, Response::HTTP_OK, [], [CharacteristicNormalizer::CONTEXT_TYPE_KEY => CharacteristicNormalizer::TYPE_IN_LIST]);
     }
 
     /**
-     * @Route(path="/med-forms", methods={"GET"}, name="app.admin.api.nomenclatures.med_forms_get_list")
-     * @OA\Get(
-     *     tags={"Админка. Управление номенклатурой"},
-     *     summary="Список медицинских форм выпуска номенклатуры",
-     *     description="Получение списка медицинских форм",
-     *     @OA\Response(
-     *         response=200,
-     *         description="Операция выполнена",
-     *         @OA\JsonContent(
-     *             @OA\Property(property="payload", type="array", @OA\Items(type="object"))
-     *         ),
-     *     ),
-     *     @OA\Response(
-     *         response=404,
-     *         description="Данные не найдены"
-     *     )
-     * )
-     * @return JsonResponse
-     * @throws ApiException
-     */
-    public function listMedicalFormsAction(): JsonResponse
-    {
-        try {
-            $payload = NomenclatureDataProvider::medForms();
-        } catch (AppException $e) {
-            throw new ApiException($e);
-        }
-        return $this->json($payload);
-    }
-
-    /**
-     * @Route(path="", methods={"POST"}, name="app.admin.api.nomenclatures.post_create")
+     * @Route(path="", methods={"POST"}, name="app.admin.api.characteristics.post_create")
      * @OA\Post(
-     *     tags={"Админка. Управление номенклатурой"},
-     *     summary="Создание номенклатуры",
-     *     description="Создание новой номенклатуры",
+     *     tags={"Админка. Управление характеристиками"},
+     *     summary="Создание характеристики",
+     *     description="Создание новой характеристики",
      *     @OA\RequestBody(
      *         description="Данные номенклатуры",
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *             @OA\Property(property="producer", description="id производителя", type="string"),
-     *             @OA\Property(property="name", description="Короткое название производителя", type="string"),
-     *             @OA\Property(property="medicalForm", description="Медицинская форма", type="string"),
-     *             @OA\Property(property="isVat", description="НДС/не НДС", type="boolean"),
+     *             @OA\Property(property="nomenclature", description="id номенклатуры", type="string"),
+     *             @OA\Property(property="serial", description="Серия", type="string"),
+     *             @OA\Property(property="expire", description="Срок годности", type="string"),
      *             )
      *         )
      *     ),
@@ -146,10 +114,10 @@ class NomenclatureController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="producer", type="object"),
-     *             @OA\Property(property="name", example="Визин", type="string"),
-     *             @OA\Property(property="medicalForm", example="Капли", type="string"),
-     *             @OA\Property(property="isVat", example="false", type="boolean"),
+     *             @OA\Property(property="nomenclature", type="object"),
+     *             @OA\Property(property="serial", example="GH8318", type="string"),
+     *             @OA\Property(property="expire", example="12/2027", type="string"),
+     *             @OA\Property(property="expireOriginal", example="31.12.2027 00:00:00", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *             @OA\Property(property="deleteTime", type="string", example="26.05.2021 13:20:15", nullable=true),
@@ -160,28 +128,27 @@ class NomenclatureController extends AbstractController
      *         description="Ошибка валидации"
      *     )
      * )
-     * @param NomenclatureManager $manager
+     * @param CharacteristicManager $manager
      * @param ValidatorInterface $validator
-     * @param CreateNomenclatureSchema $nomenclatureSchema
+     * @param CreateCharacteristicSchema $characteristicSchema
      * @return JsonResponse
      */
     public function createAction(
-        NomenclatureManager $manager,
+        CharacteristicManager $manager,
         ValidatorInterface $validator,
-        CreateNomenclatureSchema $nomenclatureSchema
+        CreateCharacteristicSchema $characteristicSchema
     ): JsonResponse {
         try {
-            $errors = $validator->validate($nomenclatureSchema);
+            $errors = $validator->validate($characteristicSchema);
 
             if ($errors->count() > 0) {
                 throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
             }
 
             $producer = $manager->create(
-                $nomenclatureSchema->producer,
-                $nomenclatureSchema->name,
-                $nomenclatureSchema->medicalForm,
-                $nomenclatureSchema->isVat
+                $characteristicSchema->nomenclature,
+                $characteristicSchema->serial,
+                $characteristicSchema->expire,
             );
         } catch (AppException $e) {
             throw new ApiException($e);
@@ -191,30 +158,29 @@ class NomenclatureController extends AbstractController
     }
 
     /**
-     * @Route(path="/{id}", methods={"PUT"}, name="app.admin.api.nomenclatures.put_edit")
+     * @Route(path="/{id}", methods={"PUT"}, name="app.admin.api.characteristics.put_edit")
      * @OA\Put(
-     *     tags={"Админка. Управление номенклатурой"},
-     *     summary="Редактирование номенклатуры",
-     *     description="Редактирование номенклатуры",
+     *     tags={"Админка. Управление характеристиками"},
+     *     summary="Редактирование характеристики",
+     *     description="Редактирование характеристики",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="id номенклатуры",
+     *         description="id характеристики",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
      *         )
      *     ),
      *     @OA\RequestBody(
-     *         description="Данные номенклатуры",
+     *         description="Данные характеристики",
      *         @OA\MediaType(
      *             mediaType="application/json",
      *             @OA\Schema(
      *                 type="object",
-     *             @OA\Property(property="producer", description="id производителя", type="string"),
-     *             @OA\Property(property="name", description="Короткое название производителя", type="string"),
-     *             @OA\Property(property="medicalForm", description="Медицинская форма", type="string"),
-     *             @OA\Property(property="isVat", description="НДС/не НДС", type="boolean"),
+     *             @OA\Property(property="nomenclature", description="id номенклатуры", type="string"),
+     *             @OA\Property(property="serial", description="Серия", type="string"),
+     *             @OA\Property(property="expire", description="Срок годности", type="string"),
      *             )
      *         )
      *     ),
@@ -223,10 +189,10 @@ class NomenclatureController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="producer", type="object"),
-     *             @OA\Property(property="name", example="Визин", type="string"),
-     *             @OA\Property(property="medicalForm", example="Капли", type="string"),
-     *             @OA\Property(property="isVat", example="false", type="boolean"),
+     *             @OA\Property(property="nomenclature", type="object"),
+     *             @OA\Property(property="serial", example="GH8318", type="string"),
+     *             @OA\Property(property="expire", example="12/2027", type="string"),
+     *             @OA\Property(property="expireOriginal", example="31.12.2027 00:00:00", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *             @OA\Property(property="deleteTime", type="string", example="26.05.2021 13:20:15", nullable=true),
@@ -237,20 +203,20 @@ class NomenclatureController extends AbstractController
      *         description="Ошибка валидации"
      *     )
      * )
-     * @param NomenclatureManager $manager
+     * @param CharacteristicManager $manager
      * @param ValidatorInterface $validator
-     * @param CreateNomenclatureSchema $nomenclatureSchema
+     * @param CreateCharacteristicSchema $characteristicSchema
      * @param string $id
      * @return JsonResponse
      */
     public function editAction(
-        NomenclatureManager $manager,
+        CharacteristicManager $manager,
         ValidatorInterface $validator,
-        CreateNomenclatureSchema $nomenclatureSchema,
+        CreateCharacteristicSchema $characteristicSchema,
         string $id
     ): JsonResponse {
         try {
-            $errors = $validator->validate($nomenclatureSchema);
+            $errors = $validator->validate($characteristicSchema);
 
             if ($errors->count() > 0) {
                 throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
@@ -258,10 +224,9 @@ class NomenclatureController extends AbstractController
 
             $producer = $manager->edit(
                 $id,
-                $nomenclatureSchema->producer,
-                $nomenclatureSchema->name,
-                $nomenclatureSchema->medicalForm,
-                $nomenclatureSchema->isVat
+                $characteristicSchema->nomenclature,
+                $characteristicSchema->serial,
+                $characteristicSchema->expire,
             );
         } catch (AppException $e) {
             throw new ApiException($e);
@@ -271,15 +236,15 @@ class NomenclatureController extends AbstractController
     }
 
     /**
-     * @Route(path="/{id}", methods={"GET"}, name="app.admin.api.nomenclatures.get_details")
+     * @Route(path="/{id}", methods={"GET"}, name="app.admin.api.characteristics.get_details")
      * @OA\Get(
-     *     tags={"Админка. Управление номенклатурой"},
-     *     summary="Просмотр одной номенклатуры",
-     *     description="Данные одной номенклатуры",
+     *     tags={"Админка. Управление характеристиками"},
+     *     summary="Просмотр одной характеристики",
+     *     description="Данные одной характеристики",
      *     @OA\Parameter(
      *         name="id",
      *         in="path",
-     *         description="id номенклатуры",
+     *         description="id характеристики",
      *         required=true,
      *         @OA\Schema(
      *             type="string"
@@ -290,10 +255,10 @@ class NomenclatureController extends AbstractController
      *         description="Операция выполнена",
      *         @OA\JsonContent(
      *             @OA\Property(property="id", type="string", example="id"),
-     *             @OA\Property(property="producer", type="object"),
-     *             @OA\Property(property="name", example="Визин", type="string"),
-     *             @OA\Property(property="medicalForm", example="Капли", type="string"),
-     *             @OA\Property(property="isVat", example="false", type="boolean"),
+     *             @OA\Property(property="nomenclature", type="object"),
+     *             @OA\Property(property="serial", example="GH8318", type="string"),
+     *             @OA\Property(property="expire", example="12/2027", type="string"),
+     *             @OA\Property(property="expireOriginal", example="31.12.2027 00:00:00", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
      *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
      *             @OA\Property(property="deleteTime", type="string", example="26.05.2021 13:20:15", nullable=true),

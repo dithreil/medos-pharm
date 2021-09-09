@@ -10,6 +10,7 @@ use App\Entity\Nomenclature;
 class NomenclatureNormalizer extends AbstractCustomNormalizer
 {
     public const CONTEXT_TYPE_KEY = 'nomenclature';
+    public const TYPE_IN_CHARACTERISTIC = 'in_characteristic';
     public const TYPE_IN_LIST = 'in_list';
 
     /**
@@ -42,6 +43,14 @@ class NomenclatureNormalizer extends AbstractCustomNormalizer
                         $format,
                         [ProducerNormalizer::CONTEXT_TYPE_KEY => ProducerNormalizer::TYPE_IN_NOMENCLATURE]
                     ),
+                ];
+                break;
+            case self::TYPE_IN_CHARACTERISTIC:
+                $result = [
+                    'id' => $object->getId(),
+                    'name' => $object->getName(),
+                    'medicalForm' => NomenclatureDataProvider::getStringValueOfMedForms($object->getMedicalForm()),
+                    'isVat' => $object->isVat(),
                 ];
                 break;
             default:

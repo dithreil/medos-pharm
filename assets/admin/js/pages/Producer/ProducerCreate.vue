@@ -79,7 +79,7 @@ import {producerCreate} from '../../models/CreateModels';
         ...validationHelpers,
     },
 })
-export default class ProducerEdit extends Vue {
+export default class ProducerCreate extends Vue {
   protected createProducer!: ({payload}: {payload: IProducer}) => any;
 
   @Ref('dialog') readonly dialog!: QDialog;

@@ -13,4 +13,9 @@ export default {
         EDIT: (id: string) => `/admin/api/suppliers/${id}`,
         DETAILS: (id: string) => `/admin/api/suppliers/${id}`,
     },
+    STORE: {
+        DEFAULT: '/admin/api/stores',
+        EDIT: (id: string) => `/admin/api/stores/${id}`,
+        DETAILS: (id: string) => `/admin/api/stores/${id}`,
+    },
 };

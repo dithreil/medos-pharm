@@ -8,11 +8,11 @@
             >
                 <q-card-section>
                     <div class="text-h6">
-                        Создать производителя
+                        Создать торговую точку
                     </div>
                 </q-card-section>
                 <q-card-section>
-                    <div class="Supplier__input">
+                    <div class="store__input">
                       <q-input
                           v-model="model.name"
                           outlined
@@ -32,30 +32,7 @@
                             ]"
                       />
                       <q-input
-                          v-model="model.phoneNumber"
-                          outlined
-                          mask="+7 (###) ###-##-##"
-                          fill-mask
-                          unmasked-value
-                          label="Телефон"
-                          lazy-rules
-                          :rules="[
-                            (val) => phoneRule(val) || $errorMessages.INVALID_PHONE,
-                            (val) => !!val || $errorMessages.REQUIRED,
-                        ]"
-                      />
-                      <q-input
-                          v-model="model.email"
-                          outlined
-                          label="Email"
-                          lazy-rules
-                          :rules="[
-                            (val) => emailRule(val) || $errorMessages.INVALID_EMAIL,
-                            (val) => !!val || $errorMessages.REQUIRED,
-                        ]"
-                      />
-                      <q-input
-                          v-model="model.information"
+                          v-model="model.description"
                           outlined
                           type="textarea"
                           label="Доп. информация"
@@ -89,26 +66,26 @@
 import {mapActions} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
 import {Component, Ref, Vue} from 'vue-property-decorator';
-import {ISupplierDetails} from '../../interfaces/Supplier';
-import {ISupplier} from '../../interfaces/Supplier';
+import {IStoreDetails} from '../../interfaces/Store';
+import {IStore} from '../../interfaces/Store';
 import {QDialog, QForm} from 'quasar';
-import {supplierCreate} from '../../models/CreateModels';
+import {storeCreate} from '../../models/CreateModels';
 
 @Component({
     methods: {
         ...mapActions({
-            createSupplier: 'supplier/createSupplier',
+            createStore: 'store/createStore',
         }),
         ...validationHelpers,
     },
 })
-export default class SupplierСreate extends Vue {
-  protected createSupplier!: ({payload}: {payload: ISupplier}) => any;
+export default class StoreEdit extends Vue {
+  protected createStore!: ({payload}: {payload: IStore}) => any;
 
   @Ref('dialog') readonly dialog!: QDialog;
   @Ref('form') readonly form!: QForm;
 
-  protected model: ISupplierDetails = JSON.parse(JSON.stringify(supplierCreate));
+  protected model: IStoreDetails = JSON.parse(JSON.stringify(storeCreate));
   isFormInvalid() {
       return this.form.validate();
   };
@@ -129,7 +106,7 @@ export default class SupplierСreate extends Vue {
       if (!isValid) return;
 
       try {
-          await this.createSupplier({payload: {...this.model}});
+          await this.createStore({payload: {...this.model}});
           this.$emit('ok');
           this.hide();
       } catch (error) {

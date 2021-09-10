@@ -16,6 +16,12 @@
                 Поставщики
               </router-link>
             </li>
+          <li class="sidebar-menu__item">
+            <span class="material-icons">photo</span>
+            <router-link :to="{name: 'StoreList'}">
+              Торговые точки
+            </router-link>
+          </li>
         </ul>
     </div>
 </template>

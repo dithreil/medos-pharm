@@ -1,5 +1,6 @@
 import {IProducer} from '../interfaces/producer';
 import {ISupplier} from '../interfaces/supplier';
+import {IStore} from "../interfaces/store";
 
 const producerCreate: IProducer = {
     id: '',
@@ -16,4 +17,11 @@ const supplierCreate: ISupplier = {
     phoneNumber: '',
     information: '',
 };
-export {producerCreate, supplierCreate};
+
+const storeCreate: IStore = {
+    id: '',
+    name: '',
+    address: '',
+    description: '',
+};
+export {producerCreate, supplierCreate, storeCreate};

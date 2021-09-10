@@ -90,7 +90,7 @@ module.exports = {
         'object-curly-spacing': ['error', 'never'],
         'array-bracket-spacing': ['error', 'never'],
         'operator-linebreak': ['error', 'before'],
-        "linebreak-style": 'off',
+        'linebreak-style': 'off',
         'yoda': ['error', 'always'],
         'arrow-parens': ['error', 'always'],
         'newline-before-return': 'error',

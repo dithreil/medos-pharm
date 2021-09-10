@@ -1,3 +1,5 @@
+import {IListResponseData} from "./request-params";
+
 export interface IProducer {
     id: string,
     shortName: string,
@@ -10,12 +12,6 @@ export interface IProducerDetails extends IProducer{
     updatedAt: string
 }
 
-export interface IProducerData {
-    total: number | null,
-    pages: number | null,
-    limit: number | null,
-    page: number | null,
-    prev: number | null,
-    next: number | null,
+export interface IProducerData extends IListResponseData{
     items: Array<IProducer> | null
 }

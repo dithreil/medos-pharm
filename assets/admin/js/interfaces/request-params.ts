@@ -19,3 +19,12 @@ export interface IServerResponse {
     status: number,
     statusText: string,
 }
+
+export interface IListResponseData {
+    total: number | null,
+    pages: number | null,
+    limit: number | null,
+    page: number | null,
+    prev: number | null,
+    next: number | null,
+}

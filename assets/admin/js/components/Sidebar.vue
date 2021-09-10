@@ -10,6 +10,12 @@
                     Производители
                 </router-link>
             </li>
+            <li class="sidebar-menu__item">
+              <span class="material-icons">photo</span>
+              <router-link :to="{name: 'SupplierList'}">
+                Поставщики
+              </router-link>
+            </li>
         </ul>
     </div>
 </template>

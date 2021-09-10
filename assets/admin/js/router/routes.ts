@@ -11,6 +11,11 @@ const routes: RouteConfig[] = [
         name: 'ProducerList',
         component: () => import('../pages/Producer/ProducerList.vue'),
     },
+    {
+        path: '/supplier',
+        name: 'SupplierList',
+        component: () => import('../pages/Supplier/SupplierList.vue'),
+    },
 ];
 
 export default routes;

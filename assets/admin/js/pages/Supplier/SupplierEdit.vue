@@ -8,38 +8,62 @@
             >
                 <q-card-section>
                     <div class="text-h6">
-                       Редактировать производителя
+                       Редактировать поставщика
                     </div>
                 </q-card-section>
                 <q-card-section>
-                    <div class="producer__input">
+                    <div class="supplier__input">
                         <q-input
-                            v-model="model.fullName"
+                            v-model="model.name"
                             outlined
-                            label="Полное наименование"
+                            label="Наименование"
                             lazy-rules
                             :rules="[
                                 (val) => !!val || $errorMessages.REQUIRED,
                             ]"
                         />
                         <q-input
-                            v-model="model.shortName"
+                            v-model="model.address"
                             outlined
-                            label="Сокращенно"
+                            label="Адрес"
                             lazy-rules
                             :rules="[
                                 (val) => !!val || $errorMessages.REQUIRED,
                             ]"
                         />
-                        <q-input
-                            v-model="model.country"
-                            outlined
-                            label="Страна"
-                            lazy-rules
-                            :rules="[
-                                (val) => !!val || $errorMessages.REQUIRED,
-                            ]"
-                        />
+                      <q-input
+                          v-model="model.phoneNumber"
+                          outlined
+                          mask="+7 (###) ###-##-##"
+                          fill-mask
+                          unmasked-value
+                          label="Телефон"
+                          lazy-rules
+                          :rules="[
+                            (val) => phoneRule(val) || $errorMessages.INVALID_PHONE,
+                            (val) => !!val || $errorMessages.REQUIRED,
+                        ]"
+                      />
+                      <q-input
+                          v-model="model.email"
+                          outlined
+                          label="Email"
+                          lazy-rules
+                          :rules="[
+                            (val) => emailRule(val) || $errorMessages.INVALID_EMAIL,
+                            (val) => !!val || $errorMessages.REQUIRED,
+                        ]"
+                      />
+                      <q-input
+                          v-model="model.information"
+                          outlined
+                          type="textarea"
+                          label="Доп. информация"
+                          lazy-rules
+                          :rules="[
+                            (val) => !!val || $errorMessages.REQUIRED,
+                        ]"
+                      />
                     </div>
                 </q-card-section>
                 <q-card-actions align="right">
@@ -65,35 +89,34 @@
 import {mapActions} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
 import {Component, Prop, Ref, Vue} from 'vue-property-decorator';
-import {IProducerDetails} from '../../interfaces/producer';
+import {ISupplierDetails} from '../../interfaces/supplier';
 import {QDialog, QForm} from 'quasar';
-import {producerCreate} from '../../models/CreateModels';
+import {supplierCreate} from '../../models/CreateModels';
 import {IServerResponse} from '../../interfaces/request-params';
 
 @Component({
     methods: {
         ...mapActions({
-            getProducerDetails: 'producer/getProducerDetails',
-            editProducerData: 'producer/editProducerData',
+            getSupplierDetails: 'supplier/getSupplierDetails',
+            editSupplierData: 'supplier/editSupplierData',
         }),
         ...validationHelpers,
     },
 })
-export default class ProducerEdit extends Vue {
-  protected editProducerData!: ({id, payload}: {id: string, payload: IProducerDetails}) => any;
-  protected getProducerDetails!: (id: string) => IServerResponse;
+export default class SupplierEdit extends Vue {
+  protected editSupplierData!: ({id, payload}: {id: string, payload: ISupplierDetails}) => any;
+  protected getSupplierDetails!: (id: string) => IServerResponse;
 
 
-  @Prop({type: String, required: true}) readonly producerId!: string;
+  @Prop({type: String, required: true}) readonly supplierId!: string;
 
   @Ref('dialog') readonly dialog!: QDialog;
   @Ref('form') readonly form!: QForm;
 
-  protected model: IProducerDetails = JSON.parse(JSON.stringify(producerCreate));
+  protected model: ISupplierDetails = JSON.parse(JSON.stringify(supplierCreate));
 
   async mounted() {
-      const response = await this.getProducerDetails(this.producerId);
-
+      const response = await this.getSupplierDetails(this.supplierId);
       this.model = response.data;
   };
 
@@ -117,7 +140,7 @@ export default class ProducerEdit extends Vue {
       if (!isValid) return;
 
       try {
-          await this.editProducerData({id: this.model.id, payload: this.model});
+          await this.editSupplierData({id: this.model.id, payload: this.model});
           this.$emit('ok');
           this.hide();
       } catch (error) {

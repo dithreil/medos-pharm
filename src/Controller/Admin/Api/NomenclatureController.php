@@ -101,7 +101,7 @@ class NomenclatureController extends AbstractController
      *         response=200,
      *         description="Операция выполнена",
      *         @OA\JsonContent(
-     *             @OA\Property(property="payload", type="array", @OA\Items(type="object"))
+     *             @OA\Property(property="payload", type="array", @OA\Items(type="string"))
      *         ),
      *     ),
      *     @OA\Response(
@@ -115,7 +115,7 @@ class NomenclatureController extends AbstractController
     public function listMedicalFormsAction(): JsonResponse
     {
         try {
-            $payload = NomenclatureDataProvider::medForms();
+            $payload = NomenclatureDataProvider::medFormsStringOnly();
         } catch (AppException $e) {
             throw new ApiException($e);
         }

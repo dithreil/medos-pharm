@@ -50,9 +50,9 @@ class CharacteristicNormalizer extends AbstractCustomNormalizer
                     'serial' => $object->getSerial(),
                     'expireOriginal' => DateTimeUtils::formatDate($object->getExpireTime()),
                     'expire' => DateTimeUtils::formatDate($object->getExpireTime(), DateTimeUtils::FORMAT_EXPIRE),
-                    'createTime' => $object->getCreateTime(),
-                    'updateTime' => $object->getUpdateTime(),
-                    'deleteTime' => $object->getDeleteTime(),
+                    'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
+                    'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),
+                    'deleteTime' => DateTimeUtils::formatDate($object->getDeleteTime()),
                     'nomenclature' => $this->normalizer->normalize(
                         $object->getNomenclature(),
                         $format,

@@ -6,6 +6,7 @@ namespace App\Serializer\Normalizer;
 
 use App\DataProvider\NomenclatureDataProvider;
 use App\Entity\Nomenclature;
+use App\Utils\DateTimeUtils;
 
 class NomenclatureNormalizer extends AbstractCustomNormalizer
 {
@@ -59,9 +60,9 @@ class NomenclatureNormalizer extends AbstractCustomNormalizer
                     'name' => $object->getName(),
                     'medicalForm' => NomenclatureDataProvider::getStringValueOfMedForms($object->getMedicalForm()),
                     'isVat' => $object->isVat(),
-                    'createTime' => $object->getCreateTime(),
-                    'updateTime' => $object->getUpdateTime(),
-                    'deleteTime' => $object->getDeleteTime(),
+                    'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
+                    'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),
+                    'deleteTime' => DateTimeUtils::formatDate($object->getDeleteTime()),
                     'producer' => $this->normalizer->normalize(
                         $object->getProducer(),
                         $format,

@@ -26,6 +26,11 @@ class CreateCharacteristicSchema extends AbstractApiSchema
     public string $serial;
 
     /**
+     * @var int|null
+     */
+    public ?int $butch;
+
+    /**
      * @var string
      * @Assert\NotBlank(message="Expire time is required")
      */

@@ -4,9 +4,13 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Document\Income;
+use App\Entity\Document\StockDocument;
 use App\Exception\AppException;
 use App\Repository\SupplierRepository;
 use App\Utils\DateTimeUtils;
+use Doctrine\Common\Collections\ArrayCollection;
+use Doctrine\Common\Collections\Collection;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 
@@ -55,6 +59,12 @@ class Supplier
     private ?string $information;
 
     /**
+     * @var Collection|Income[]
+     * @ORM\OneToMany(targetEntity=StockDocument::class, mappedBy="supplier")
+     */
+    private Collection $incomes;
+
+    /**
      * @var \DateTimeImmutable
      * @ORM\Column(name="create_time", type="datetime_immutable")
      */
@@ -87,6 +97,8 @@ class Supplier
         $this->email = $email;
         $this->phoneNumber = $phoneNumber;
         $this->information = $information;
+
+        $this->incomes = new ArrayCollection();
 
         $date = DateTimeUtils::now();
         $this->createTime = $date;
@@ -179,6 +191,39 @@ class Supplier
     public function setInformation(?string $information): void
     {
         $this->information = $information;
+    }
+
+    /**
+     * @return Collection|Income[]
+     */
+    public function getIncomes(): Collection
+    {
+        return $this->incomes;
+    }
+
+    /**
+     * @param Income $incomes
+     */
+    public function addStockIncome(Income $incomes): void
+    {
+        if ($this->incomes->contains($incomes)) {
+            return;
+        }
+
+        $this->incomes->add($incomes);
+        $incomes->setSupplier($this);
+    }
+
+    /**
+     * @param Income $incomes
+     */
+    public function removeIncome(Income $incomes): void
+    {
+        if (!$this->incomes->contains($incomes)) {
+            return;
+        }
+
+        $this->incomes->removeElement($incomes);
     }
 
     /**

@@ -5,6 +5,8 @@ declare(strict_types=1);
 namespace App\Entity;
 
 use App\DataProvider\UserDataProvider;
+use App\Exception\AppException;
+use App\Utils\DateTimeUtils;
 use Doctrine\ORM\Mapping as ORM;
 use Ramsey\Uuid\Uuid;
 use Symfony\Component\Security\Core\User\UserInterface;
@@ -15,7 +17,6 @@ use Symfony\Component\Security\Core\User\UserInterface;
  */
 class User implements UserInterface, \Serializable
 {
-
     /**
      * @var string
      * @ORM\Column(name="id", type="guid")
@@ -97,13 +98,13 @@ class User implements UserInterface, \Serializable
     protected \DateTimeImmutable $updateTime;
 
     /**
-     * User constructor.
      * @param string $email
      * @param string $lastName
      * @param string $firstName
      * @param string|null $patronymic
      * @param string $phoneNumber
      * @param array $roles
+     * @throws AppException
      */
     public function __construct(
         string $email,
@@ -125,7 +126,7 @@ class User implements UserInterface, \Serializable
         $this->password = '';
         $this->loginAttemptsCounter = 0;
 
-        $date = new \DateTimeImmutable();
+        $date = DateTimeUtils::now();
         $this->createTime = $date;
         $this->updateTime = $date;
     }
@@ -341,19 +342,21 @@ class User implements UserInterface, \Serializable
 
     /**
      * @ORM\PrePersist()
+     * @throws AppException
      */
     public function onPrePersist(): void
     {
-        $this->createTime = new \DateTimeImmutable('now');
-        $this->updateTime = new \DateTimeImmutable('now');
+        $this->createTime = DateTimeUtils::now();
+        $this->updateTime = DateTimeUtils::now();
     }
 
     /**
      * @ORM\PreUpdate()
+     * @throws AppException
      */
     public function onPreUpdate(): void
     {
-        $this->updateTime = new \DateTimeImmutable('now');
+        $this->updateTime = DateTimeUtils::now();
     }
 
     /**

@@ -37,6 +37,12 @@ class Price
     private Characteristic $characteristic;
 
     /**
+     * @var Store
+     * @ORM\ManyToOne(targetEntity=Store::class, inversedBy="prices")
+     */
+    private Store $store;
+
+    /**
      * @var \DateTimeImmutable
      * @ORM\Column(name="create_time", type="datetime_immutable")
      */
@@ -50,19 +56,21 @@ class Price
 
     /**
      * @var \DateTimeImmutable|null
-     * @ORM\Column(name="delete_time", type="datetime_immutable")
+     * @ORM\Column(name="delete_time", type="datetime_immutable", nullable=true)
      */
     private ?\DateTimeImmutable $deleteTime;
 
     /**
      * @param Characteristic $characteristic
+     * @param Store $store
      * @param float $value
      * @throws AppException
      */
-    public function __construct(Characteristic $characteristic, float $value)
+    public function __construct(Characteristic $characteristic, Store $store, float $value)
     {
         $this->id = Uuid::uuid4()->toString();
         $this->characteristic = $characteristic;
+        $this->store = $store;
         $this->value = $value;
 
         $date = DateTimeUtils::now();
@@ -93,6 +101,22 @@ class Price
     public function setCharacteristic(Characteristic $characteristic): void
     {
         $this->characteristic = $characteristic;
+    }
+
+    /**
+     * @return Store
+     */
+    public function getStore(): Store
+    {
+        return $this->store;
+    }
+
+    /**
+     * @param Store $store
+     */
+    public function setStore(Store $store): void
+    {
+        $this->store = $store;
     }
 
     /**

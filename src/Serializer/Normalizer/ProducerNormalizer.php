@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Serializer\Normalizer;
 
 use App\Entity\Producer;
+use App\Utils\DateTimeUtils;
 
 class ProducerNormalizer extends AbstractCustomNormalizer
 {
@@ -51,8 +52,8 @@ class ProducerNormalizer extends AbstractCustomNormalizer
                     'shortName' => $object->getShortName(),
                     'country' => $object->getCountry(),
                     'fullName' => $object->getFullName(),
-                    'createTime' => $object->getCreateTime(),
-                    'updateTime' => $object->getUpdateTime()
+                    'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
+                    'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),
                 ];
         }
 

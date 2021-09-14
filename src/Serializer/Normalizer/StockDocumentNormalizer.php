@@ -4,12 +4,12 @@ declare(strict_types=1);
 
 namespace App\Serializer\Normalizer;
 
-use App\Entity\Store;
+use App\Entity\Document\StockDocument;
 use App\Utils\DateTimeUtils;
 
-class StoreNormalizer extends AbstractCustomNormalizer
+class StockDocumentNormalizer extends AbstractCustomNormalizer
 {
-    public const CONTEXT_TYPE_KEY = 'store';
+    public const CONTEXT_TYPE_KEY = 'stock_document';
     public const TYPE_IN_LIST = 'in_list';
 
     /**
@@ -19,11 +19,11 @@ class StoreNormalizer extends AbstractCustomNormalizer
      */
     public function supportsNormalization($data, string $format = null): bool
     {
-        return $data instanceof Store;
+        return $data instanceof StockDocument;
     }
 
     /**
-     * @param Store $object
+     * @param StockDocument $object
      * @param string|null $format
      * @param array $context
      * @return array|\ArrayObject|bool|float|int|string|null
@@ -34,16 +34,20 @@ class StoreNormalizer extends AbstractCustomNormalizer
             case self::TYPE_IN_LIST:
                 $result = [
                     'id' => $object->getId(),
-                    'name' => $object->getName(),
-                    'address' => $object->getAddress()
+                    'store' => $object->getStore(),
+                    'type' => $object->getType(),
                 ];
                 break;
             default:
                 $result = [
                     'id' => $object->getId(),
-                    'name' => $object->getName(),
-                    'address' => $object->getAddress(),
-                    'description' => $object->getDescription(),
+                    'store' => $object->getStore(),
+                    'type' => $object->getType(),
+                    'rows' => $this->normalizer->normalize(
+                        $object->getStockChanges(),
+                        $format,
+                        [StockChangeNormalizer::CONTEXT_TYPE_KEY => StockChangeNormalizer::TYPE_IN_LIST]
+                    ),
                     'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
                     'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),
                 ];

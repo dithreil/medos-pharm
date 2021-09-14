@@ -5,6 +5,7 @@ declare(strict_types=1);
 namespace App\Serializer\Normalizer;
 
 use App\Entity\Supplier;
+use App\Utils\DateTimeUtils;
 
 class SupplierNormalizer extends AbstractCustomNormalizer
 {
@@ -45,8 +46,8 @@ class SupplierNormalizer extends AbstractCustomNormalizer
                     'email' => $object->getEmail(),
                     'phoneNumber' => $object->getPhoneNumber(),
                     'information' => $object->getInformation(),
-                    'createTime' => $object->getCreateTime(),
-                    'updateTime' => $object->getUpdateTime()
+                    'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
+                    'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),
                 ];
         }
 

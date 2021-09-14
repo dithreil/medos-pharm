@@ -4,6 +4,9 @@ declare(strict_types=1);
 
 namespace App\Entity;
 
+use App\Entity\Document\Income;
+use App\Entity\Document\PriceDocument;
+use App\Entity\Document\StockDocument;
 use App\Exception\AppException;
 use App\Repository\StoreRepository;
 use App\Utils\DateTimeUtils;
@@ -51,6 +54,24 @@ class Store
     private Collection $employees;
 
     /**
+     * @var Collection|Income[]
+     * @ORM\OneToMany(targetEntity=Income::class, mappedBy="store")
+     */
+    private Collection $incomes;
+
+    /**
+     * @var Collection|StockDocument[]
+     * @ORM\OneToMany(targetEntity=StockDocument::class, mappedBy="store")
+     */
+    private Collection $stockDocuments;
+
+    /**
+     * @var Collection|PriceDocument[]
+     * @ORM\OneToMany(targetEntity=PriceDocument::class, mappedBy="store")
+     */
+    private Collection $priceDocuments;
+
+    /**
      * @var \DateTimeImmutable
      * @ORM\Column(name="create_time", type="datetime_immutable")
      */
@@ -76,6 +97,9 @@ class Store
         $this->description = $description;
 
         $this->employees = new ArrayCollection();
+        $this->stockDocuments = new ArrayCollection();
+        $this->incomes = new ArrayCollection();
+        $this->priceDocuments = new ArrayCollection();
 
         $date = DateTimeUtils::now();
         $this->createTime = $date;
@@ -169,6 +193,105 @@ class Store
         }
 
         $this->employees->removeElement($employee);
+    }
+
+    /**
+     * @return Collection|Income[]
+     */
+    public function getIncomes(): Collection
+    {
+        return $this->incomes;
+    }
+
+    /**
+     * @param Income $income
+     */
+    public function addIncome(Income $income): void
+    {
+        if ($this->incomes->contains($income)) {
+            return;
+        }
+
+        $this->incomes->add($income);
+        $income->setStore($this);
+    }
+
+    /**
+     * @param Income $income
+     */
+    public function removeIncome(Income $income): void
+    {
+        if (!$this->incomes->contains($income)) {
+            return;
+        }
+
+        $this->incomes->removeElement($income);
+    }
+
+    /**
+     * @return Collection|StockDocument[]
+     */
+    public function getStockDocuments(): Collection
+    {
+        return $this->stockDocuments;
+    }
+
+    /**
+     * @param StockDocument $stockDocument
+     */
+    public function addStockDocument(StockDocument $stockDocument): void
+    {
+        if ($this->stockDocuments->contains($stockDocument)) {
+            return;
+        }
+
+        $this->stockDocuments->add($stockDocument);
+        $stockDocument->setStore($this);
+    }
+
+    /**
+     * @param StockDocument $stockDocument
+     */
+    public function removeStockDocument(StockDocument $stockDocument): void
+    {
+        if (!$this->stockDocuments->contains($stockDocument)) {
+            return;
+        }
+
+        $this->stockDocuments->removeElement($stockDocument);
+    }
+
+    /**
+     * @return Collection|PriceDocument[]
+     */
+    public function getPriceDocuments(): Collection
+    {
+        return $this->priceDocuments;
+    }
+
+    /**
+     * @param PriceDocument $priceDocument
+     */
+    public function addPriceDocument(PriceDocument $priceDocument): void
+    {
+        if ($this->priceDocuments->contains($priceDocument)) {
+            return;
+        }
+
+        $this->priceDocuments->add($priceDocument);
+        $priceDocument->setStore($this);
+    }
+
+    /**
+     * @param PriceDocument $priceDocument
+     */
+    public function removePriceDocument(PriceDocument $priceDocument): void
+    {
+        if (!$this->priceDocuments->contains($priceDocument)) {
+            return;
+        }
+
+        $this->priceDocuments->removeElement($priceDocument);
     }
 
     /**

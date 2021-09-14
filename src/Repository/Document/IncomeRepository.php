@@ -2,28 +2,28 @@
 
 declare(strict_types=1);
 
-namespace App\Repository;
+namespace App\Repository\Document;
 
-use App\Entity\Characteristic;
+use App\Entity\Document\Income;
 use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\QueryBuilder;
 use Doctrine\ORM\UnexpectedResultException;
 use Doctrine\Persistence\ManagerRegistry;
 
 /**
- * @method Characteristic|null find($id, $lockMode = null, $lockVersion = null)
- * @method Characteristic|null findOneBy(array $criteria, array $orderBy = null)
- * @method Characteristic[]    findAll()
- * @method Characteristic[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
+ * @method Income|null find($id, $lockMode = null, $lockVersion = null)
+ * @method Income|null findOneBy(array $criteria, array $orderBy = null)
+ * @method Income[]    findAll()
+ * @method Income[]    findBy(array $criteria, array $orderBy = null, $limit = null, $offset = null)
  */
-class CharacteristicRepository extends ServiceEntityRepository
+class IncomeRepository extends ServiceEntityRepository
 {
     /**
      * @param ManagerRegistry $registry
      */
     public function __construct(ManagerRegistry $registry)
     {
-        parent::__construct($registry, Characteristic::class);
+        parent::__construct($registry, Income::class);
     }
 
     /**
@@ -52,7 +52,7 @@ class CharacteristicRepository extends ServiceEntityRepository
     public function countBy(array $filters): int
     {
         $qb = $this->buildFilterQuery($filters);
-        $qb->select('COUNT(c.id)');
+        $qb->select('COUNT(i.id)');
 
         return intval($qb->getQuery()->getSingleScalarResult());
     }
@@ -63,8 +63,9 @@ class CharacteristicRepository extends ServiceEntityRepository
      */
     private function buildFilterQuery(array $filters): QueryBuilder
     {
-        $qb = $this->createQueryBuilder('c')
-            ->innerJoin('c.nomenclature', 'n');
+        $qb = $this->createQueryBuilder('i')
+            ->innerJoin('i.store', 'st')
+            ->innerJoin('i.supplier', 'su');
 
         $filter = $filters['filter'] ?? null;
         $sortBy = $filters['sortBy'] ?? null;
@@ -77,15 +78,15 @@ class CharacteristicRepository extends ServiceEntityRepository
         if ($filter !== null) {
             $qb->andWhere(
                 $qb->expr()->orX(
-                    $qb->expr()->like('c.serial', ':filter'),
-                    $qb->expr()->like('n.name', ':filter')
+                    $qb->expr()->like('st.name', ':filter'),
+                    $qb->expr()->like('su.name', ':filter')
                 )
             );
             $qb->setParameter('filter', '%' . $filter . '%');
         }
 
         if ($sortBy) {
-            $qb->addOrderBy('c.' . $sortBy, $sortOrder);
+            $qb->addOrderBy('i.' . $sortBy, $sortOrder);
         }
 
         return $qb;

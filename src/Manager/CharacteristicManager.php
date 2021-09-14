@@ -6,10 +6,12 @@ namespace App\Manager;
 
 use App\Entity\Characteristic;
 use App\Exception\AppException;
+use App\Model\PaginatedDataModel;
 use App\Repository\CharacteristicRepository;
 use App\Traits\EntityManagerAwareTrait;
 use App\Traits\TokenStorageAwareTrait;
 use App\Utils\DateTimeUtils;
+use Doctrine\ORM\UnexpectedResultException;
 use Symfony\Component\HttpFoundation\Response;
 
 class CharacteristicManager
@@ -42,18 +44,21 @@ class CharacteristicManager
     /**
      * @param string $nomenclatureId
      * @param string $serial
+     * @param int $butch
      * @param string $expire
      * @return Characteristic
      * @throws AppException
      */
-    public function create(string $nomenclatureId, string $serial, string $expire): Characteristic
+    public function create(string $nomenclatureId, string $serial, int $butch, string $expire): Characteristic
     {
         $nomenclature = $this->nomenclatureManager->get($nomenclatureId);
         $expireTime = DateTimeUtils::parse($expire);
 
-        $characteristic = new Characteristic($nomenclature, $serial, $expireTime);
+        $characteristic = new Characteristic($nomenclature, $serial, $butch, $expireTime);
 
         $this->entityManager->persist($characteristic);
+
+        $nomenclature->addCharacteristic($characteristic);
         $this->entityManager->flush();
 
         return $characteristic;
@@ -76,8 +81,6 @@ class CharacteristicManager
         if ($characteristic->getNomenclature() !== $nomenclature) {
             $oldNomenclature = $characteristic->getNomenclature();
             $oldNomenclature->removeCharacteristic($characteristic);
-
-            $characteristic->setNomenclature($nomenclature);
             $nomenclature->addCharacteristic($characteristic);
         }
 
@@ -103,5 +106,25 @@ class CharacteristicManager
         }
 
         return $result;
+    }
+
+    /**
+     * @param array $filters
+     * @return PaginatedDataModel
+     * @throws AppException
+     */
+    public function search(array $filters): PaginatedDataModel
+    {
+        try {
+            $page = intval($filters['page'] ?? 1);
+            $limit = intval($filters['limit'] ?? 10);
+
+            $items = $this->characteristicRepository->search($filters, $page, $limit);
+            $total = $this->characteristicRepository->countBy($filters);
+
+            return new PaginatedDataModel($total, $limit, $page, $items);
+        } catch (UnexpectedResultException $e) {
+            throw new AppException($e->getMessage(), Response::HTTP_BAD_REQUEST, $e);
+        }
     }
 }

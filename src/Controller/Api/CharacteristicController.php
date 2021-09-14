@@ -6,6 +6,7 @@ namespace App\Controller\Api;
 
 use App\Exception\ApiException;
 use App\Exception\AppException;
+use App\Manager\CharacteristicManager;
 use App\Manager\NomenclatureManager;
 use App\Serializer\Normalizer\CharacteristicNormalizer;
 use OpenApi\Annotations as OA;
@@ -71,11 +72,11 @@ class CharacteristicController extends AbstractController
      *     )
      * )
      * @param Request $request
-     * @param NomenclatureManager $manager
+     * @param CharacteristicManager $manager
      * @return JsonResponse
      * @throws ApiException
      */
-    public function listAction(Request $request, NomenclatureManager $manager): JsonResponse
+    public function listAction(Request $request, CharacteristicManager $manager): JsonResponse
     {
         try {
             $filters = $request->query->all();
@@ -109,6 +110,7 @@ class CharacteristicController extends AbstractController
      *             @OA\Property(property="id", type="string", example="id"),
      *             @OA\Property(property="nomenclature", type="object"),
      *             @OA\Property(property="serial", example="GH8318", type="string"),
+     *             @OA\Property(property="butch", example="16754741", type="integer"),
      *             @OA\Property(property="expire", example="12/2027", type="string"),
      *             @OA\Property(property="expireOriginal", example="31.12.2027 00:00:00", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),

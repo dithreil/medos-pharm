@@ -55,6 +55,8 @@ class NomenclatureManager
         $nomenclature = new Nomenclature($producer, $name, $medicalFormIndex, $isVat);
 
         $this->entityManager->persist($nomenclature);
+
+        $producer->addNomenclature($nomenclature);
         $this->entityManager->flush();
 
         return $nomenclature;
@@ -78,8 +80,6 @@ class NomenclatureManager
         if ($nomenclature->getProducer() !== $producer) {
             $oldProducer = $nomenclature->getProducer();
             $oldProducer->removeNomenclature($nomenclature);
-
-            $nomenclature->setProducer($producer);
             $producer->addNomenclature($nomenclature);
         }
 

@@ -105,6 +105,7 @@ class CharacteristicController extends AbstractController
      *                 type="object",
      *             @OA\Property(property="nomenclature", description="id номенклатуры", type="string"),
      *             @OA\Property(property="serial", description="Серия", type="string"),
+     *             @OA\Property(property="butch", description="Партия", type="integer"),
      *             @OA\Property(property="expire", description="Срок годности", type="string"),
      *             )
      *         )
@@ -116,6 +117,7 @@ class CharacteristicController extends AbstractController
      *             @OA\Property(property="id", type="string", example="id"),
      *             @OA\Property(property="nomenclature", type="object"),
      *             @OA\Property(property="serial", example="GH8318", type="string"),
+     *             @OA\Property(property="butch", example="16754741", type="integer"),
      *             @OA\Property(property="expire", example="12/2027", type="string"),
      *             @OA\Property(property="expireOriginal", example="31.12.2027 00:00:00", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
@@ -145,16 +147,17 @@ class CharacteristicController extends AbstractController
                 throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
             }
 
-            $producer = $manager->create(
+            $characteristic = $manager->create(
                 $characteristicSchema->nomenclature,
                 $characteristicSchema->serial,
+                $characteristicSchema->butch,
                 $characteristicSchema->expire,
             );
         } catch (AppException $e) {
             throw new ApiException($e);
         }
 
-        return $this->json($producer, Response::HTTP_CREATED);
+        return $this->json($characteristic, Response::HTTP_CREATED);
     }
 
     /**
@@ -180,6 +183,7 @@ class CharacteristicController extends AbstractController
      *                 type="object",
      *             @OA\Property(property="nomenclature", description="id номенклатуры", type="string"),
      *             @OA\Property(property="serial", description="Серия", type="string"),
+     *             @OA\Property(property="butch", description="Партия", type="integer"),
      *             @OA\Property(property="expire", description="Срок годности", type="string"),
      *             )
      *         )
@@ -191,6 +195,7 @@ class CharacteristicController extends AbstractController
      *             @OA\Property(property="id", type="string", example="id"),
      *             @OA\Property(property="nomenclature", type="object"),
      *             @OA\Property(property="serial", example="GH8318", type="string"),
+     *             @OA\Property(property="butch", example="16754741", type="integer"),
      *             @OA\Property(property="expire", example="12/2027", type="string"),
      *             @OA\Property(property="expireOriginal", example="31.12.2027 00:00:00", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
@@ -257,6 +262,7 @@ class CharacteristicController extends AbstractController
      *             @OA\Property(property="id", type="string", example="id"),
      *             @OA\Property(property="nomenclature", type="object"),
      *             @OA\Property(property="serial", example="GH8318", type="string"),
+     *             @OA\Property(property="butch", example="16754741", type="integer"),
      *             @OA\Property(property="expire", example="12/2027", type="string"),
      *             @OA\Property(property="expireOriginal", example="31.12.2027 00:00:00", type="string"),
      *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),

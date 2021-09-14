@@ -5,14 +5,14 @@ const instance = axios.create({
     baseURL: apiConstants.BASE,
     withCredentials: false,
     headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json charset=utf-8',
         'X-Requested-With': 'XMLHttpRequest',
     },
 });
 
 instance.interceptors.response.use((response) => {
-    if (response.headers['content-type'] === 'text/html; charset=UTF-8' && response.request.responseURL) {
+    if ('text/html; charset=UTF-8' === response.headers['content-type'] && response.request.responseURL) {
         window.location.href = response.request.responseURL;
     }
 
@@ -25,7 +25,7 @@ const axiosParams = (params) => {
     const queries = {};
 
     for (const i in params) {
-        if (params[i] !== '' && !Array.isArray(params[i])) {
+        if ('' !== params[i] && !Array.isArray(params[i])) {
             queries[i] = params[i];
         } else if (Array.isArray(params[i]) && params[i].length) {
             for (const param of params[i]) {

@@ -2,13 +2,13 @@
   <div class="page-bottom-margin">
     <div class="row no-wrap justify-between items-center">
       <h1 class="text-h4 text-primary">
-        Производители
+        Поставщики
       </h1>
       <q-btn
           flat
           color="primary"
-          label="Создать производителя"
-          @click="showProducerCreateModal"
+          label="Создать поставщика"
+          @click="showSupplierCreateModal"
       />
     </div>
     <q-table
@@ -17,9 +17,9 @@
         :pagination.sync="pagination"
         :loading="loading"
         :filter="search"
-        no-results-label="Список производителей пуст"
+        no-results-label="Список поставщиков пуст"
         binary-state-sort
-        @request="fetchProducers"
+        @request="fetchSuppliers"
     >
       <template #top-right>
         <q-input
@@ -42,8 +42,8 @@
                 flat
                 color="primary"
                 icon="edit"
-                title="Редактировать производителя"
-                @click="showProducerEditModal(props.row)"
+                title="Редактировать поставщика"
+                @click="showSupplierEditModal(props.row)"
             />
           </div>
         </q-td>
@@ -55,39 +55,38 @@
 
 <script lang="ts">
 import {mapActions, mapGetters} from 'vuex';
-import ProducerEdit from './ProducerEdit.vue';
-import ProducerCreate from './ProducerCreate.vue';
+import SupplierEdit from './SupplierEdit.vue';
+import SupplierCreate from './SupplierCreate.vue';
 import {Component, Vue} from 'vue-property-decorator';
-import {IProducer, IProducerData} from '../../interfaces/producer';
 import {IPagination, IRequestParams} from '../../interfaces/request-params';
+import {ISupplier, ISupplierData} from '../../interfaces/supplier';
 
 
 @Component({
     computed: {
         ...mapGetters({
-            producersData: 'producer/producersData',
-            producerRequestParams: 'producer/producerRequestParams',
+            suppliersData: 'supplier/suppliersData',
+            supplierRequestParams: 'supplier/supplierRequestParams',
         }),
     },
     methods: {
         ...mapActions({
-            updateProducerRequestParams: 'producer/updateProducerRequestParams',
+            updateSupplierRequestParams: 'supplier/updateSupplierRequestParams',
         }),
     },
 })
-export default class ProducerList extends Vue {
-  protected producersData!: IProducerData;
-  protected updateProducerRequestParams!: (payload: IRequestParams) => any;
+export default class SupplierList extends Vue {
+  protected suppliersData!: ISupplierData;
+  protected updateSupplierRequestParams!: (payload: IRequestParams) => any;
 
   private tableColumns = [
-      {name: 'fullName', align: 'left', label: 'Полное наименование', field: 'fullName', sortable: true},
-      {name: 'shortName', align: 'left', label: 'Сокращенно', field: 'shortName'},
-      {name: 'country', align: 'left', label: 'Страна', field: 'country'},
+      {name: 'name', align: 'left', label: 'Наименование', field: 'name', sortable: true},
+      {name: 'address', align: 'left', label: 'Адрес', field: 'address'},
       {name: 'actions', align: 'left', label: 'Действия'},
   ];
   private search = '';
   private pagination: IPagination = {
-      sortBy: 'fullName',
+      sortBy: 'name',
       descending: false,
       page: 1,
       rowsPerPage: 10,
@@ -97,43 +96,43 @@ export default class ProducerList extends Vue {
   private loading = false;
 
   get tableData() {
-      return this.producersData?.items || [];
+      return this.suppliersData?.items || [];
   };
 
   mounted() {
-      this.fetchProducers({pagination: this.pagination});
+      this.fetchSuppliers({pagination: this.pagination});
   };
 
-  async fetchProducers({pagination}: { pagination: IPagination }) {
+  async fetchSuppliers({pagination}: { pagination: IPagination }) {
       this.loading = true;
 
       pagination.limit = pagination.rowsPerPage;
       pagination.rowsPerPage = null;
 
-      await this.updateProducerRequestParams({
+      await this.updateSupplierRequestParams({
           ...pagination,
           filter: this.search,
       });
-      this.pagination.rowsNumber = this.producersData.total;
-      this.pagination.rowsPerPage = this.producersData.limit;
-      this.pagination.page = this.producersData.page;
+      this.pagination.rowsNumber = this.suppliersData.total;
+      this.pagination.rowsPerPage = this.suppliersData.limit;
+      this.pagination.page = this.suppliersData.page;
       this.pagination.sortBy = pagination.sortBy;
       this.pagination.descending = pagination.descending;
 
       this.loading = false;
   };
 
-  showProducerEditModal(producer: IProducer) {
+  showSupplierEditModal(supplier: ISupplier) {
       this.$q.dialog({
-          component: ProducerEdit,
+          component: SupplierEdit,
           parent: this,
-          producerId: producer.id,
+          supplierId: supplier.id,
       });
   };
 
-  showProducerCreateModal() {
+  showSupplierCreateModal() {
       this.$q.dialog({
-          component: ProducerCreate,
+          component: SupplierCreate,
           parent: this,
       });
   };

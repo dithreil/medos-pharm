@@ -2,13 +2,13 @@
   <div class="page-bottom-margin">
     <div class="row no-wrap justify-between items-center">
       <h1 class="text-h4 text-primary">
-        Производители
+        Торговые точки
       </h1>
       <q-btn
           flat
           color="primary"
-          label="Создать производителя"
-          @click="showProducerCreateModal"
+          label="Создать торговую точку"
+          @click="showStoreCreateModal"
       />
     </div>
     <q-table
@@ -17,9 +17,9 @@
         :pagination.sync="pagination"
         :loading="loading"
         :filter="search"
-        no-results-label="Список производителей пуст"
+        no-results-label="Список торговых точек пуст"
         binary-state-sort
-        @request="fetchProducers"
+        @request="fetchStores"
     >
       <template #top-right>
         <q-input
@@ -42,8 +42,8 @@
                 flat
                 color="primary"
                 icon="edit"
-                title="Редактировать производителя"
-                @click="showProducerEditModal(props.row)"
+                title="Редактировать торговую точку"
+                @click="showStoreEditModal(props.row)"
             />
           </div>
         </q-td>
@@ -55,39 +55,38 @@
 
 <script lang="ts">
 import {mapActions, mapGetters} from 'vuex';
-import ProducerEdit from './ProducerEdit.vue';
-import ProducerCreate from './ProducerCreate.vue';
+import StoreEdit from './StoreEdit.vue';
+import StoreCreate from './StoreCreate.vue';
 import {Component, Vue} from 'vue-property-decorator';
-import {IProducer, IProducerData} from '../../interfaces/producer';
 import {IPagination, IRequestParams} from '../../interfaces/request-params';
+import {IStore, IStoreData} from '../../interfaces/store';
 
 
 @Component({
     computed: {
         ...mapGetters({
-            producersData: 'producer/producersData',
-            producerRequestParams: 'producer/producerRequestParams',
+            storesData: 'store/storesData',
+            storeRequestParams: 'store/storeRequestParams',
         }),
     },
     methods: {
         ...mapActions({
-            updateProducerRequestParams: 'producer/updateProducerRequestParams',
+            updateStoreRequestParams: 'store/updateStoreRequestParams',
         }),
     },
 })
-export default class ProducerList extends Vue {
-  protected producersData!: IProducerData;
-  protected updateProducerRequestParams!: (payload: IRequestParams) => any;
+export default class StoreList extends Vue {
+  protected storesData!: IStoreData;
+  protected updateStoreRequestParams!: (payload: IRequestParams) => any;
 
   private tableColumns = [
-      {name: 'fullName', align: 'left', label: 'Полное наименование', field: 'fullName', sortable: true},
-      {name: 'shortName', align: 'left', label: 'Сокращенно', field: 'shortName'},
-      {name: 'country', align: 'left', label: 'Страна', field: 'country'},
+      {name: 'name', align: 'left', label: 'Наименование', field: 'name', sortable: true},
+      {name: 'address', align: 'left', label: 'Адрес', field: 'address'},
       {name: 'actions', align: 'left', label: 'Действия'},
   ];
   private search = '';
   private pagination: IPagination = {
-      sortBy: 'fullName',
+      sortBy: 'name',
       descending: false,
       page: 1,
       rowsPerPage: 10,
@@ -97,43 +96,43 @@ export default class ProducerList extends Vue {
   private loading = false;
 
   get tableData() {
-      return this.producersData?.items || [];
+      return this.storesData?.items || [];
   };
 
   mounted() {
-      this.fetchProducers({pagination: this.pagination});
+      this.fetchStores({pagination: this.pagination});
   };
 
-  async fetchProducers({pagination}: { pagination: IPagination }) {
+  async fetchStores({pagination}: { pagination: IPagination }) {
       this.loading = true;
 
       pagination.limit = pagination.rowsPerPage;
       pagination.rowsPerPage = null;
 
-      await this.updateProducerRequestParams({
+      await this.updateStoreRequestParams({
           ...pagination,
           filter: this.search,
       });
-      this.pagination.rowsNumber = this.producersData.total;
-      this.pagination.rowsPerPage = this.producersData.limit;
-      this.pagination.page = this.producersData.page;
+      this.pagination.rowsNumber = this.storesData.total;
+      this.pagination.rowsPerPage = this.storesData.limit;
+      this.pagination.page = this.storesData.page;
       this.pagination.sortBy = pagination.sortBy;
       this.pagination.descending = pagination.descending;
 
       this.loading = false;
   };
 
-  showProducerEditModal(producer: IProducer) {
+  showStoreEditModal(store: IStore) {
       this.$q.dialog({
-          component: ProducerEdit,
+          component: StoreEdit,
           parent: this,
-          producerId: producer.id,
+          storeId: store.id,
       });
   };
 
-  showProducerCreateModal() {
+  showStoreCreateModal() {
       this.$q.dialog({
-          component: ProducerCreate,
+          component: StoreCreate,
           parent: this,
       });
   };

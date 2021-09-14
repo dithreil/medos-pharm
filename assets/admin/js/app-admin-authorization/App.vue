@@ -83,7 +83,7 @@ export default {
 
             requests.post(apiConstants.AUTH.LOGIN, {...this.model})
                 .then((response) => {
-                    if (response.status !== 200) {
+                    if (200 !== response.status) {
                         notifizer.error();
                     } else {
                         window.location.href = '/admin';

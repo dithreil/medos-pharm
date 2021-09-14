@@ -8,39 +8,39 @@
             >
                 <q-card-section>
                     <div class="text-h6">
-                        Создать производителя
+                        Создать торговую точку
                     </div>
                 </q-card-section>
                 <q-card-section>
-                    <div class="producer__input">
-                        <q-input
-                            v-model="model.fullName"
-                            outlined
-                            label="Полное наименование"
-                            lazy-rules
-                            :rules="[
+                    <div class="store__input">
+                      <q-input
+                          v-model="model.name"
+                          outlined
+                          label="Наименование"
+                          lazy-rules
+                          :rules="[
                                 (val) => !!val || $errorMessages.REQUIRED,
                             ]"
-                        />
-                        <q-input
-                            v-model="model.shortName"
-                            outlined
-                            label="Сокращенно"
-                            lazy-rules
-                            :rules="[
+                      />
+                      <q-input
+                          v-model="model.address"
+                          outlined
+                          label="Адрес"
+                          lazy-rules
+                          :rules="[
                                 (val) => !!val || $errorMessages.REQUIRED,
                             ]"
-                        />
-                        <q-input
-                            v-model="model.country"
-                            outlined
-                            label="Страна"
-                            lazy-rules
-                            :rules="[
-                                (val) => !!val || $errorMessages.REQUIRED,
-                            ]"
-                        />
-
+                      />
+                      <q-input
+                          v-model="model.description"
+                          outlined
+                          type="textarea"
+                          label="Доп. информация"
+                          lazy-rules
+                          :rules="[
+                            (val) => !!val || $errorMessages.REQUIRED,
+                        ]"
+                      />
                     </div>
                 </q-card-section>
                 <q-card-actions align="right">
@@ -66,26 +66,26 @@
 import {mapActions} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
 import {Component, Ref, Vue} from 'vue-property-decorator';
-import {IProducerDetails} from '../../interfaces/producer';
-import {IProducer} from '../../interfaces/producer';
+import {IStoreDetails} from '../../interfaces/Store';
+import {IStore} from '../../interfaces/Store';
 import {QDialog, QForm} from 'quasar';
-import {producerCreate} from '../../models/CreateModels';
+import {storeCreate} from '../../models/CreateModels';
 
 @Component({
     methods: {
         ...mapActions({
-            createProducer: 'producer/createProducer',
+            createStore: 'store/createStore',
         }),
         ...validationHelpers,
     },
 })
-export default class ProducerCreate extends Vue {
-  protected createProducer!: ({payload}: {payload: IProducer}) => any;
+export default class StoreEdit extends Vue {
+  protected createStore!: ({payload}: {payload: IStore}) => any;
 
   @Ref('dialog') readonly dialog!: QDialog;
   @Ref('form') readonly form!: QForm;
 
-  protected model: IProducerDetails = JSON.parse(JSON.stringify(producerCreate));
+  protected model: IStoreDetails = JSON.parse(JSON.stringify(storeCreate));
   isFormInvalid() {
       return this.form.validate();
   };
@@ -106,7 +106,7 @@ export default class ProducerCreate extends Vue {
       if (!isValid) return;
 
       try {
-          await this.createProducer({payload: {...this.model}});
+          await this.createStore({payload: {...this.model}});
           this.$emit('ok');
           this.hide();
       } catch (error) {

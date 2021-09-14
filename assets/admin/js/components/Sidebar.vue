@@ -10,18 +10,29 @@
                     Производители
                 </router-link>
             </li>
+            <li class="sidebar-menu__item">
+              <span class="material-icons">photo</span>
+              <router-link :to="{name: 'SupplierList'}">
+                Поставщики
+              </router-link>
+            </li>
+          <li class="sidebar-menu__item">
+            <span class="material-icons">photo</span>
+            <router-link :to="{name: 'StoreList'}">
+              Торговые точки
+            </router-link>
+          </li>
         </ul>
     </div>
 </template>
 
-<script>
-export default {
-    name: 'Sidebar',
-    props: {
-        isActive: {
-            type: Boolean,
-        },
-    },
+<script lang="ts">
+import {Component, Prop, Vue} from 'vue-property-decorator';
+
+
+@Component
+export default class Sidebar extends Vue {
+  @Prop({type: Boolean, required: false}) readonly isActive!: boolean;
 };
 </script>
 

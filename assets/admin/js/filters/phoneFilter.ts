@@ -1,7 +1,7 @@
-export default (phone) => {
+export default (phone: string) => {
     let result = '';
 
-    if (phone.charAt(0) === '7') {
+    if ('7' === phone.charAt(0)) {
         result = `${phone}`;
     } else {
         result = `7${phone}`;

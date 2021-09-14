@@ -5,14 +5,14 @@ const instance = axios.create({
     baseURL: apiConstants.BASE,
     withCredentials: false,
     headers: {
-        Accept: 'application/json',
+        'Accept': 'application/json',
         'Content-Type': 'application/json charset=utf-8',
         'X-Requested-With': 'XMLHttpRequest',
     },
 });
 
 instance.interceptors.response.use((response) => {
-    if (response.headers['content-type'] === 'text/html; charset=UTF-8' && response.request.responseURL) {
+    if ('text/html; charset=UTF-8' === response.headers['content-type'] && response.request.responseURL) {
         window.location.href = response.request.responseURL;
     }
 
@@ -21,11 +21,13 @@ instance.interceptors.response.use((response) => {
     return Promise.reject(error);
 });
 
-const axiosParams = (params) => {
+const axiosParams = (params: any) => {
     const queries = {};
 
     for (const i in params) {
         if (params[i]) {
+            // @ts-ignore
+            // todo: fix
             queries[i] = params[i];
         }
     }
@@ -34,7 +36,7 @@ const axiosParams = (params) => {
 };
 
 const requests = {
-    get(url, queryParams = null) {
+    get(url: string, queryParams = null) {
         if (!queryParams) {
             return instance.get(url);
         } else {
@@ -42,7 +44,7 @@ const requests = {
         }
     },
 
-    post(url, data) {
+    post(url: string, data: any) {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -58,7 +60,7 @@ const requests = {
         return instance.post(url, data, config);
     },
 
-    put(url, data) {
+    put(url: string, data: any) {
         const config = {
             headers: {
                 'Content-Type': 'application/json',
@@ -74,8 +76,8 @@ const requests = {
         return instance.put(url, data, config);
     },
 
-    patch(url, data) {
-        const config = {};
+    patch(url: string, data: any) {
+        const config = {headers: {}};
         if (data instanceof FormData) {
             config.headers = {
                 'Content-Type': 'multipart/form-data',
@@ -85,7 +87,7 @@ const requests = {
         return instance.patch(url, data, config);
     },
 
-    delete(url) {
+    delete(url: string) {
         return instance.delete(url);
     },
 };

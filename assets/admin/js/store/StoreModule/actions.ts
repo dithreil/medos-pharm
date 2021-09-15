@@ -32,7 +32,7 @@ const actions: ActionTree<IStoreInterface, StateInterface> = {
             });
     },
     editStoreData({dispatch}, {id, payload}) {
-        return requests.put(apiConstants.STORE.EDIT(id), payload)
+        return requests.put(apiConstants.STORE.DETAILS(id), payload)
             .then((response) => {
                 dispatch('getStoreList');
                 notifizer.success('Данные торговой точки изменены');

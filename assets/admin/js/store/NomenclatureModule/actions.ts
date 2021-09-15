@@ -45,7 +45,7 @@ const actions: ActionTree<INomenclatureInterface, StateInterface> = {
             });
     },
     editNomenclatureData({dispatch}, {id, payload}) {
-        return requests.put(apiConstants.NOMENCLATURE.EDIT(id), payload)
+        return requests.put(apiConstants.NOMENCLATURE.DETAILS(id), payload)
             .then((response) => {
                 dispatch('getNomenclatureList');
                 notifizer.success('Данные номенклатуры изменены');

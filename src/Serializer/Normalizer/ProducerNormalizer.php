@@ -52,6 +52,11 @@ class ProducerNormalizer extends AbstractCustomNormalizer
                     'shortName' => $object->getShortName(),
                     'country' => $object->getCountry(),
                     'fullName' => $object->getFullName(),
+                    'nomenclatures' => $this->normalizer->normalize(
+                        $object->getNomenclatures(),
+                        $format,
+                        [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_CHARACTERISTIC]
+                    ),
                     'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
                     'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),
                 ];

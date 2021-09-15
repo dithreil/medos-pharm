@@ -119,6 +119,6 @@ class NomenclatureDataProvider
      */
     public static function isMedicalFormAllowed(?int $medicalForm): bool
     {
-        return in_array($medicalForm, self::medForms());
+        return array_key_exists($medicalForm, self::medForms());
     }
 }

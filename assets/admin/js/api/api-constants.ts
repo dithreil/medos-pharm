@@ -18,4 +18,10 @@ export default {
         EDIT: (id: string) => `/admin/api/stores/${id}`,
         DETAILS: (id: string) => `/admin/api/stores/${id}`,
     },
+    NOMENCLATURE: {
+        DEFAULT: '/admin/api/nomenclatures',
+        MED_FORMS: '/admin/api/nomenclatures/med-forms',
+        EDIT: (id: string) => `/admin/api/nomenclatures/${id}`,
+        DETAILS: (id: string) => `/admin/api/nomenclatures/${id}`,
+    },
 };

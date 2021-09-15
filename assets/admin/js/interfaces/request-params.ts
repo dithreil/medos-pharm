@@ -1,3 +1,4 @@
+
 export interface IRequestParams extends IPagination {
     filter: string | null,
 }
@@ -27,4 +28,10 @@ export interface IListResponseData {
     page: number | null,
     prev: number | null,
     next: number | null,
+}
+
+export interface IConstants {
+    systemConstants: {
+        selectPagination: IPagination
+    }
 }

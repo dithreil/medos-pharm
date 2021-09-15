@@ -1,6 +1,7 @@
 import {IProducer} from '../interfaces/producer';
 import {ISupplier} from '../interfaces/supplier';
-import {IStore} from "../interfaces/store";
+import {IStore} from '../interfaces/store';
+import {INomenclature} from '../interfaces/nomenclature';
 
 const producerCreate: IProducer = {
     id: '',
@@ -18,10 +19,18 @@ const supplierCreate: ISupplier = {
     information: '',
 };
 
+const nomenclatureCreate: INomenclature = {
+    id: '',
+    name: '',
+    isVat: false,
+    medicalForm: '',
+    producer: producerCreate,
+};
+
 const storeCreate: IStore = {
     id: '',
     name: '',
     address: '',
     description: '',
 };
-export {producerCreate, supplierCreate, storeCreate};
+export {producerCreate, nomenclatureCreate, supplierCreate, storeCreate};

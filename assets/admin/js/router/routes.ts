@@ -21,6 +21,29 @@ const routes: RouteConfig[] = [
         name: 'StoreList',
         component: () => import('../pages/Store/StoreList.vue'),
     },
+    {
+        path: '/nomenclature',
+        name: 'NomenclatureList',
+        component: () => import('../pages/Nomenclature/NomenclatureList.vue'),
+    },
+    {
+        path: '/nomenclature/create',
+        name: 'NomenclatureCreate',
+        component: () => import('../pages/Nomenclature/NomenclatureCreate.vue'),
+    },
+    {
+        path: '/nomenclature/:nomenclatureId/edit',
+        name: 'NomenclatureEdit',
+        component: () => import('../pages/Nomenclature/NomenclatureEdit.vue'),
+        props: true,
+    },
+    {
+        path: '/nomenclature/:nomenclatureId',
+        name: 'NomenclatureDetails',
+        component: () => import('../pages/Nomenclature/NomenclatureDetails.vue'),
+        props: true,
+    },
+
 ];
 
 export default routes;

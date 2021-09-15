@@ -28,6 +28,12 @@
               Номенклатура
             </router-link>
           </li>
+          <li class="sidebar-menu__item">
+            <span class="material-icons">description</span>
+            <router-link :to="{name: 'IncomeList'}">
+              Поступления товаров
+            </router-link>
+          </li>
         </ul>
     </div>
 </template>

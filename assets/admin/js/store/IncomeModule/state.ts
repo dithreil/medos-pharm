@@ -1,14 +1,14 @@
-import {IProducerData} from '../../interfaces/producer';
+import {IDocumentIncomeData} from '../../interfaces/income';
 import {IRequestParams} from '../../interfaces/request-params';
 
-export interface IProducerInterface {
-    producers: IProducerData;
-    producerRequestParams: IRequestParams;
+export interface IDocumentIncomeInterface {
+    incomes: IDocumentIncomeData;
+    incomeRequestParams: IRequestParams;
 }
 
-function state(): IProducerInterface {
+function state(): IDocumentIncomeInterface {
     return {
-        producers: {
+        incomes: {
             total: null,
             pages: null,
             limit: null,
@@ -17,7 +17,7 @@ function state(): IProducerInterface {
             next: null,
             items: null,
         },
-        producerRequestParams: {
+        incomeRequestParams: {
             active: false,
             filter: null,
             descending: null,

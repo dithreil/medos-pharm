@@ -1,16 +1,16 @@
 import {requests, apiConstants} from '../../api';
 import * as notifizer from '../../utils/notifizer';
 import {ActionTree} from 'vuex';
-import {IProducerInterface} from './state';
+import {IDocumentIncomeInterface} from './state';
 import {StateInterface} from '../index';
 
 
-const actions: ActionTree<IProducerInterface, StateInterface> = {
+const actions: ActionTree<IDocumentIncomeInterface, StateInterface> = {
 
-    getProducerList({commit, getters}) {
-        return requests.get(apiConstants.PRODUCER.DEFAULT, getters.producerRequestParams)
+    getIncomeList({commit, getters}) {
+        return requests.get(apiConstants.INCOME.DEFAULT, getters.incomeRequestParams)
             .then((response) => {
-                commit('updateProducers', response.data);
+                commit('updateIncomes', response.data);
 
                 return response;
             })
@@ -20,8 +20,8 @@ const actions: ActionTree<IProducerInterface, StateInterface> = {
                 throw error;
             });
     },
-    getProducerDetails(ctx, id) {
-        return requests.get(apiConstants.PRODUCER.DETAILS(id))
+    getIncomeDetails(ctx, id) {
+        return requests.get(apiConstants.INCOME.DETAILS(id))
             .then((response) => {
                 return response;
             })
@@ -31,11 +31,11 @@ const actions: ActionTree<IProducerInterface, StateInterface> = {
                 throw error;
             });
     },
-    editProducerData({dispatch}, {id, payload}) {
-        return requests.put(apiConstants.PRODUCER.DETAILS(id), payload)
+    editIncomeData({dispatch}, {id, payload}) {
+        return requests.put(apiConstants.INCOME.DETAILS(id), payload)
             .then((response) => {
-                dispatch('getProducerList');
-                notifizer.success('Данные производителя изменены');
+                dispatch('getIncomeList');
+                notifizer.success('Данные поступления изменены');
 
                 return response;
             })
@@ -45,11 +45,11 @@ const actions: ActionTree<IProducerInterface, StateInterface> = {
                 throw error;
             });
     },
-    createProducer({dispatch}, {payload}) {
-        return requests.post(apiConstants.PRODUCER.DEFAULT, payload)
+    createIncome({dispatch}, {payload}) {
+        return requests.post(apiConstants.INCOME.DEFAULT, payload)
             .then((response) => {
-                dispatch('getProducerList');
-                notifizer.success('Производитель создан');
+                dispatch('getIncomeList');
+                notifizer.success('Поступление создано');
 
                 return response;
             })
@@ -59,10 +59,10 @@ const actions: ActionTree<IProducerInterface, StateInterface> = {
                 throw error;
             });
     },
-    updateProducerRequestParams({commit, dispatch}, payload) {
-        commit('updateProducerRequestParams', payload);
+    updateIncomeRequestParams({commit, dispatch}, payload) {
+        commit('updateIncomeRequestParams', payload);
 
-        return dispatch('getProducerList');
+        return dispatch('getIncomeList');
     },
 };
 export default actions;

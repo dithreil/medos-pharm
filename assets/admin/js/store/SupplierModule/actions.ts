@@ -32,7 +32,7 @@ const actions: ActionTree<ISupplierInterface, StateInterface> = {
             });
     },
     editSupplierData({dispatch}, {id, payload}) {
-        return requests.put(apiConstants.SUPPLIER.EDIT(id), payload)
+        return requests.put(apiConstants.SUPPLIER.DETAILS(id), payload)
             .then((response) => {
                 dispatch('getSupplierList');
                 notifizer.success('Данные поставщика изменены');

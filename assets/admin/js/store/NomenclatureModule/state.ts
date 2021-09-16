@@ -1,14 +1,16 @@
-import {IProducerData} from '../../interfaces/producer';
+import {INomenclature, INomenclatureData} from '../../interfaces/nomenclature';
 import {IRequestParams} from '../../interfaces/request-params';
 
-export interface IProducerInterface {
-    producers: IProducerData;
-    producerRequestParams: IRequestParams;
+export interface INomenclatureInterface {
+    nomenclatures: INomenclatureData;
+    nomenclatureRequestParams: IRequestParams;
+    medForms: Array<string>;
 }
 
-function state(): IProducerInterface {
+function state(): INomenclatureInterface {
     return {
-        producers: {
+        medForms: [],
+        nomenclatures: {
             total: null,
             pages: null,
             limit: null,
@@ -17,7 +19,7 @@ function state(): IProducerInterface {
             next: null,
             items: null,
         },
-        producerRequestParams: {
+        nomenclatureRequestParams: {
             active: false,
             filter: null,
             descending: null,

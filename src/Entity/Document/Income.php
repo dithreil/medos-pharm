@@ -27,6 +27,12 @@ class Income
     private string $id;
 
     /**
+     * @var float|null
+     * @ORM\Column(name="amount", type="float", nullable=true)
+     */
+    private ?float $amount;
+
+    /**
      * @var \DateTimeImmutable
      * @ORM\Column(name="date", type="datetime_immutable")
      */
@@ -99,6 +105,7 @@ class Income
         $this->priceDocument = $priceDocument;
         $this->date = $date;
         $this->isSet = $isSet;
+        $this->amount = null;
 
         $date = DateTimeUtils::now();
         $this->createTime = $date;
@@ -175,6 +182,22 @@ class Income
     public function setPriceDocument(PriceDocument $priceDocument): void
     {
         $this->priceDocument = $priceDocument;
+    }
+
+    /**
+     * @return float|null
+     */
+    public function getAmount(): ?float
+    {
+        return $this->amount;
+    }
+
+    /**
+     * @param float|null $amount
+     */
+    public function setAmount(?float $amount): void
+    {
+        $this->amount = $amount;
     }
 
     /**

@@ -11,6 +11,7 @@ use App\Utils\DateTimeUtils;
 class StockChangeNormalizer extends AbstractCustomNormalizer
 {
     public const CONTEXT_TYPE_KEY = 'stock_change';
+    public const TYPE_IN_INCOME_ROWS = 'in_income_rows';
     public const TYPE_IN_LIST = 'in_list';
 
     /**
@@ -32,6 +33,24 @@ class StockChangeNormalizer extends AbstractCustomNormalizer
     public function normalize($object, string $format = null, array $context = [])
     {
         switch ($this->getType($context)) {
+            case self::TYPE_IN_INCOME_ROWS:
+                $result = [
+                    'id' => $object->getId(),
+                    'nomenclature' => $object->getCharacteristic()->getNomenclature()->getName(),
+                    'medicalForm' => NomenclatureDataProvider::getStringValueOfMedForms(
+                        $object->getCharacteristic()->getNomenclature()->getMedicalForm()
+                    ),
+                    'serial' => $object->getCharacteristic()->getSerial(),
+                    'expire' =>  DateTimeUtils::formatDate(
+                        $object->getCharacteristic()->getExpireTime(),
+                        DateTimeUtils::FORMAT_EXPIRE
+                    ),
+                    'value' => $object->getValue(),
+                    'purchasePrice' => $object->getPriceChange()->getOldValue(),
+                    'retailPrice' => $object->getPriceChange()->getNewValue(),
+                    'amount' => $object->getPriceChange()->getOldValue() * $object->getValue(),
+                ];
+                break;
             case self::TYPE_IN_LIST:
                 $result = [
                     'id' => $object->getId(),

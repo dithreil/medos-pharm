@@ -39,6 +39,13 @@ class StockChange
     private StockDocument $document;
 
     /**
+     * @var PriceChange
+     * @ORM\OneToOne(targetEntity="PriceChange", inversedBy="stockChange")
+     * @ORM\JoinColumn(name="price_change_id", referencedColumnName="id", nullable=false)
+     */
+    private PriceChange $priceChange;
+
+    /**
      * @var float
      * @ORM\Column(name="value", type="float")
      */
@@ -66,6 +73,7 @@ class StockChange
      * @param StockDocument $document
      * @param Characteristic $characteristic
      * @param float $value
+     * @param PriceChange $priceChange
      * @param bool $isSet
      * @throws AppException
      */
@@ -73,12 +81,14 @@ class StockChange
         StockDocument $document,
         Characteristic $characteristic,
         float $value,
+        PriceChange $priceChange,
         bool $isSet = false
     ) {
         $this->id = Uuid::uuid4()->toString();
         $this->document = $document;
         $this->characteristic = $characteristic;
         $this->value = $value;
+        $this->priceChange = $priceChange;
         $this->isSet = $isSet;
 
         $date = DateTimeUtils::now();
@@ -124,6 +134,22 @@ class StockChange
     public function setCharacteristic(Characteristic $characteristic): void
     {
         $this->characteristic = $characteristic;
+    }
+
+    /**
+     * @return PriceChange
+     */
+    public function getPriceChange(): PriceChange
+    {
+        return $this->priceChange;
+    }
+
+    /**
+     * @param PriceChange $priceChange
+     */
+    public function setPriceChange(PriceChange $priceChange): void
+    {
+        $this->priceChange = $priceChange;
     }
 
     /**

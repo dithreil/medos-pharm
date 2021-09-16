@@ -40,7 +40,7 @@ class IncomeNormalizer extends AbstractCustomNormalizer
                         [StoreNormalizer::CONTEXT_TYPE_KEY => StoreNormalizer::TYPE_IN_LIST]
                     ),
                     'supplier' => $this->normalizer->normalize(
-                        $object->getStore(),
+                        $object->getSupplier(),
                         $format,
                         [SupplierNormalizer::CONTEXT_TYPE_KEY => SupplierNormalizer::TYPE_IN_LIST]
                     ),
@@ -49,15 +49,21 @@ class IncomeNormalizer extends AbstractCustomNormalizer
             default:
                 $result = [
                     'id' => $object->getId(),
+                    'amount' => $object->getAmount(),
                     'store' => $this->normalizer->normalize(
                         $object->getStore(),
                         $format,
                         [StoreNormalizer::CONTEXT_TYPE_KEY => StoreNormalizer::TYPE_IN_LIST]
                     ),
                     'supplier' => $this->normalizer->normalize(
-                        $object->getStore(),
+                        $object->getSupplier(),
                         $format,
                         [SupplierNormalizer::CONTEXT_TYPE_KEY => SupplierNormalizer::TYPE_IN_LIST]
+                    ),
+                    'rows' => $this->normalizer->normalize(
+                        $object->getStockDocument()->getStockChanges(),
+                        $format,
+                        [StockChangeNormalizer::CONTEXT_TYPE_KEY => StockChangeNormalizer::TYPE_IN_INCOME_ROWS]
                     ),
                     'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
                     'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),

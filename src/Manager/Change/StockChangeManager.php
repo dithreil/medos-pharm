@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Manager\Change;
 
+use App\Entity\Change\PriceChange;
 use App\Entity\Change\StockChange;
 use App\Entity\Document\StockDocument;
 use App\Exception\AppException;
@@ -12,6 +13,8 @@ use App\Repository\Change\StockChangeRepository;
 use App\Repository\Document\StockDocumentRepository;
 use App\Traits\EntityManagerAwareTrait;
 use App\Traits\TokenStorageAwareTrait;
+use Doctrine\ORM\NonUniqueResultException;
+use Doctrine\ORM\NoResultException;
 use Symfony\Component\HttpFoundation\Response;
 
 class StockChangeManager
@@ -53,6 +56,7 @@ class StockChangeManager
      * @param string $stockDocumentId
      * @param string $characteristicId
      * @param float $value
+     * @param PriceChange|null $priceChange
      * @param bool $isSet
      * @return StockChange
      * @throws AppException
@@ -61,6 +65,7 @@ class StockChangeManager
         string $stockDocumentId,
         string $characteristicId,
         float $value,
+        ?PriceChange $priceChange = null,
         bool $isSet = false
     ): StockChange {
 
@@ -71,7 +76,7 @@ class StockChangeManager
             throw new AppException("Stock document was not found!", Response::HTTP_NOT_FOUND);
         }
 
-        $stockChange = new StockChange($document, $characteristic, $value, $isSet);
+        $stockChange = new StockChange($document, $characteristic, $value, $priceChange, $isSet);
 
         $this->entityManager->persist($stockChange);
 
@@ -96,5 +101,19 @@ class StockChangeManager
         }
 
         return $result;
+    }
+
+    /**
+     * @param string $stockDocumentId
+     * @return float
+     * @throws AppException
+     */
+    public function getIncomeAmount(string $stockDocumentId): float
+    {
+        try {
+            return $this->stockChangeRepository->getIncomeAmountByStockDocument($stockDocumentId);
+        } catch (NoResultException|NonUniqueResultException $e) {
+            throw new AppException($e->getMessage(), $e->getCode());
+        }
     }
 }

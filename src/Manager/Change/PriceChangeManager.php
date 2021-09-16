@@ -6,6 +6,7 @@ namespace App\Manager\Change;
 
 use App\DataProvider\DocumentDataProvider;
 use App\Entity\Change\PriceChange;
+use App\Entity\Change\StockChange;
 use App\Entity\Document\PriceDocument;
 use App\Exception\AppException;
 use App\Manager\CharacteristicManager;
@@ -64,6 +65,7 @@ class PriceChangeManager
      * @param string $characteristicId
      * @param float $oldValue
      * @param float $newValue
+     * @param StockChange|null $stockChange
      * @param bool $isSet
      * @return PriceChange
      * @throws AppException
@@ -73,6 +75,7 @@ class PriceChangeManager
         string $characteristicId,
         float $oldValue,
         float $newValue,
+        ?StockChange $stockChange = null,
         bool $isSet = false
     ): PriceChange {
         $document = $this->priceDocumentRepository->find($priceDocumentId);
@@ -82,7 +85,7 @@ class PriceChangeManager
             throw new AppException("Price document was not found!", Response::HTTP_NOT_FOUND);
         }
 
-        $priceChange = new PriceChange($document, $characteristic, $oldValue, $newValue, $isSet);
+        $priceChange = new PriceChange($document, $characteristic, $oldValue, $newValue, $stockChange, $isSet);
 
         $this->entityManager->persist($priceChange);
 

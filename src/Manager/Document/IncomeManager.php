@@ -122,17 +122,19 @@ class IncomeManager
                 $butch,
                 $row['expire']
             );
-            $this->stockChangeManager->create(
-                $stockDocument->getId(),
-                $characteristic->getId(),
-                $row['change']
-            );
-            $this->priceChangeManager->create(
+            $priceChange = $this->priceChangeManager->create(
                 $priceDocument->getId(),
                 $characteristic->getId(),
                 $row['purchasePrice'],
                 $row['retailPrice']
             );
+            $stockChange = $this->stockChangeManager->create(
+                $stockDocument->getId(),
+                $characteristic->getId(),
+                $row['value'],
+                $priceChange
+            );
+            $priceChange->setStockChange($stockChange);
         }
 
         $income = new Income(
@@ -145,6 +147,8 @@ class IncomeManager
 
         $this->entityManager->persist($income);
 
+        $amount = $this->getAmount($income->getId());
+        $income->setAmount($amount);
         $stockDocument->setIncome($income);
         $priceDocument->setIncome($income);
         $this->entityManager->flush();
@@ -185,5 +189,16 @@ class IncomeManager
         } catch (UnexpectedResultException $e) {
             throw new AppException($e->getMessage(), Response::HTTP_BAD_REQUEST, $e);
         }
+    }
+
+    /**
+     * @param string $id
+     * @return float
+     * @throws AppException
+     */
+    public function getAmount(string $id): float
+    {
+        $income = $this->get($id);
+        return $this->stockChangeManager->getIncomeAmount($income->getStockDocument()->getId());
     }
 }

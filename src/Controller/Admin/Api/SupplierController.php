@@ -94,7 +94,7 @@ class SupplierController extends AbstractController
      * @Route(path="", methods={"POST"}, name="app.admin.api.suppliers.post_create")
      * @OA\Post(
      *     tags={"Админка. Управление поставщиками"},
-     *     summary="Создание поставщиками",
+     *     summary="Создание поставщика",
      *     description="Создание нового поставщика",
      *     @OA\RequestBody(
      *         description="Данные поставщика",

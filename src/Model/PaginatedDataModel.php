@@ -42,7 +42,6 @@ class PaginatedDataModel
     public array $items;
 
     /**
-     * PaginatedDataModel constructor.
      * @param int $total
      * @param int $limit
      * @param int $page

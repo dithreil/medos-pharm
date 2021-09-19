@@ -37,6 +37,7 @@ class StockChangeNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'nomenclature' => $object->getCharacteristic()->getNomenclature()->getName(),
+                    'producer' => $object->getCharacteristic()->getNomenclature()->getProducer()->getShortName(),
                     'medicalForm' => NomenclatureDataProvider::getStringValueOfMedForms(
                         $object->getCharacteristic()->getNomenclature()->getMedicalForm()
                     ),

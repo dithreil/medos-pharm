@@ -24,11 +24,6 @@ yarn-error.log
 .idea
 phplint.cache
 /phpstan
-
-###> symfony/web-server-bundle ###
-/.web-server-pid
-###< symfony/web-server-bundle ###
-
 ###> docker
 docker-compose.yml
 ###< docker

@@ -9,7 +9,6 @@ use Doctrine\Bundle\DoctrineBundle\Repository\ServiceEntityRepository;
 use Doctrine\ORM\NonUniqueResultException;
 use Doctrine\ORM\NoResultException;
 use Doctrine\Persistence\ManagerRegistry;
-use function Doctrine\ORM\QueryBuilder;
 
 /**
  * @method StockChange|null find($id, $lockMode = null, $lockVersion = null)
@@ -29,7 +28,7 @@ class StockChangeRepository extends ServiceEntityRepository
 
     /**
      * @param string $stockDocumentId
-     * @return int|mixed|string
+     * @return float
      * @throws NoResultException
      * @throws NonUniqueResultException
      */

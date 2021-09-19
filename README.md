@@ -40,6 +40,13 @@ php bin/console doctrine:schema:create
 php bin/console doctrine:schema:update --force
 ```
 
+> наполнение БД тестовыми данными (необходимо для создания админа)
+> хотя при наполнении уже создаётся тестовый админ
+> с email: a@b.c и паролем: 123
+```shell script
+php bin/console doctrine:fixtures:load --append
+```
+
 > создать пользователя-администратора в БД
 ```shell script
 php bin/console app:users:create-admin

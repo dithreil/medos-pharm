@@ -30,7 +30,7 @@ class CharacteristicRepository extends ServiceEntityRepository
      * @param array $filters
      * @param int|null $page
      * @param int|null $limit
-     * @return array
+     * @return array|Characteristic[]
      */
     public function search(array $filters, ?int $page = null, ?int $limit = null): array
     {

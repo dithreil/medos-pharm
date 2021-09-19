@@ -107,7 +107,8 @@ class IncomeManager
         string $date,
         string $supplierId,
         string $storeId,
-        array $rows
+        array $rows,
+        ?string $comment
     ): Income {
         $supplier = $this->supplierManager->get($supplierId);
         $store = $this->storeManager->get($storeId);
@@ -142,7 +143,9 @@ class IncomeManager
             $store,
             $stockDocument,
             $priceDocument,
-            DateTimeUtils::parse($date)
+            DateTimeUtils::parse($date),
+            false,
+            $comment
         );
 
         $this->entityManager->persist($income);
@@ -200,5 +203,25 @@ class IncomeManager
     {
         $income = $this->get($id);
         return $this->stockChangeManager->getIncomeAmount($income->getStockDocument()->getId());
+    }
+
+    /**
+     * @param string $id
+     * @throws AppException
+     */
+    public function enter(string $id): void
+    {
+        $income = $this->get($id);
+
+        $stockDocument = $income->getStockDocument();
+        $priceDocument = $income->getPriceDocument();
+
+        $stockDocument->setRowsIsSet(true);
+        $stockDocument->setIsSet(true);
+        $priceDocument->setRowsIsSet(true);
+        $priceDocument->setIsSet(true);
+        $income->setIsSet(true);
+
+        $this->entityManager->flush();
     }
 }

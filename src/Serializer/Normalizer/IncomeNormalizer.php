@@ -34,6 +34,8 @@ class IncomeNormalizer extends AbstractCustomNormalizer
             case self::TYPE_IN_LIST:
                 $result = [
                     'id' => $object->getId(),
+                    'date' => DateTimeUtils::formatDate($object->getDate()),
+                    'amount' => $object->getAmount(),
                     'store' => $this->normalizer->normalize(
                         $object->getStore(),
                         $format,
@@ -44,11 +46,13 @@ class IncomeNormalizer extends AbstractCustomNormalizer
                         $format,
                         [SupplierNormalizer::CONTEXT_TYPE_KEY => SupplierNormalizer::TYPE_IN_LIST]
                     ),
+                    'comment' => $object->getComment(),
                 ];
                 break;
             default:
                 $result = [
                     'id' => $object->getId(),
+                    'date' => DateTimeUtils::formatDate($object->getDate()),
                     'amount' => $object->getAmount(),
                     'store' => $this->normalizer->normalize(
                         $object->getStore(),
@@ -65,6 +69,7 @@ class IncomeNormalizer extends AbstractCustomNormalizer
                         $format,
                         [StockChangeNormalizer::CONTEXT_TYPE_KEY => StockChangeNormalizer::TYPE_IN_INCOME_ROWS]
                     ),
+                    'comment' => $object->getComment(),
                     'createTime' => DateTimeUtils::formatDate($object->getCreateTime()),
                     'updateTime' => DateTimeUtils::formatDate($object->getUpdateTime()),
                 ];

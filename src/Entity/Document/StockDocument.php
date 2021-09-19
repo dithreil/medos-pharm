@@ -115,4 +115,14 @@ class StockDocument extends BaseDocument
 
         $this->stockChanges->removeElement($stockChange);
     }
+
+    /**
+     * @param bool $isSet
+     */
+    public function setRowsIsSet(bool $isSet): void
+    {
+        foreach ($this->getStockChanges() as $stockChange) {
+            $stockChange->setIsSet($isSet);
+        }
+    }
 }

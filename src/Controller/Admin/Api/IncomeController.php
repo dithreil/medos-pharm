@@ -4,6 +4,7 @@ declare(strict_types=1);
 
 namespace App\Controller\Admin\Api;
 
+use App\DataProvider\PatchEntityDataProvider;
 use App\Exception\ApiException;
 use App\Exception\AppException;
 use App\Exception\ConstraintsValidationException;
@@ -105,6 +106,7 @@ class IncomeController extends AbstractController
      *             @OA\Property(property="date", description="дата накладной", type="string"),
      *             @OA\Property(property="supplierId", description="id поставщика", type="string"),
      *             @OA\Property(property="storeId", description="id склада", type="string"),
+     *             @OA\Property(property="comment", description="комментарий сотрудника", type="string", nullable=true),
      *             @OA\Property(
      *                  property="rows",
      *                  type="array",
@@ -181,7 +183,8 @@ class IncomeController extends AbstractController
                 $incomeSchema->date,
                 $incomeSchema->supplierId,
                 $incomeSchema->storeId,
-                $incomeSchema->rows
+                $incomeSchema->rows,
+                $incomeSchema->comment
             );
         } catch (AppException $e) {
             throw new ApiException($e);
@@ -234,5 +237,75 @@ class IncomeController extends AbstractController
         }
 
         return $this->json($payload, Response::HTTP_OK);
+    }
+
+    /**
+     * @Route(path="/{id}", methods={"PATCH"}, name="app.admin.api.incomes.patch_modify")
+     * @OA\Patch(
+     *     tags={"Админка. Управление приходными накладными"},
+     *     summary="Специальные действия с приходной накладной",
+     *     description="Выполнение специальных действий с приходной накладной",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="id приходной накладной",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\Parameter(
+     *         name="action",
+     *         in="query",
+     *         description="Действие над приходной накладной",
+     *         required=true,
+     *         @OA\Schema(
+     *             type="string"
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=204,
+     *         description="Операция выполнена",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Ошибка валидации"
+     *     ),
+     *     @OA\Response(
+     *         response=404,
+     *         description="Приходная накладная не найдена"
+     *     )
+     * )
+     * @param Request $request
+     * @param IncomeManager $manager
+     * @param string $id
+     * @return JsonResponse
+     * @throws ApiException
+     */
+    public function patchAction(
+        Request $request,
+        IncomeManager $manager,
+        string $id
+    ): JsonResponse {
+        try {
+            $action = $request->query->get('action');
+
+            if ($action === null) {
+                throw new AppException('Invalid action value', Response::HTTP_BAD_REQUEST);
+            }
+
+            switch ($action) {
+                case PatchEntityDataProvider::ACTION_ENTER_INCOME:
+                    $manager->enter($id);
+                    break;
+                default:
+                    throw new AppException('Unknown action value', Response::HTTP_BAD_REQUEST);
+            }
+        } catch (AppException $e) {
+            throw new ApiException($e);
+        }
+
+        return $this->json(null, Response::HTTP_NO_CONTENT);
     }
 }

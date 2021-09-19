@@ -28,6 +28,11 @@ class CreateIncomeSchema extends AbstractApiSchema
     public string $storeId;
 
     /**
+     * @var string|null
+     */
+    public ?string $comment;
+
+    /**
      * @var array
      */
     public array $rows;

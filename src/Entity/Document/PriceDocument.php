@@ -115,4 +115,14 @@ class PriceDocument extends BaseDocument
 
         $this->priceChanges->removeElement($priceChange);
     }
+
+    /**
+     * @param bool $isSet
+     */
+    public function setRowsIsSet(bool $isSet): void
+    {
+        foreach ($this->getPriceChanges() as $priceChange) {
+            $priceChange->setIsSet($isSet);
+        }
+    }
 }

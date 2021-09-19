@@ -78,8 +78,15 @@ class Income
 
     /**
      * @var bool
+     * @ORM\Column(name="is_set", type="boolean")
      */
     private bool $isSet;
+
+    /**
+     * @var string|null
+     * @ORM\Column(name="comment", type="string", nullable=true)
+     */
+    private ?string $comment;
 
     /**
      * @param Supplier $supplier
@@ -88,6 +95,7 @@ class Income
      * @param PriceDocument $priceDocument
      * @param \DateTimeImmutable $date
      * @param bool $isSet
+     * @param string|null $comment
      * @throws AppException
      */
     public function __construct(
@@ -96,7 +104,8 @@ class Income
         StockDocument $stockDocument,
         PriceDocument $priceDocument,
         \DateTimeImmutable $date,
-        bool $isSet = false
+        bool $isSet = false,
+        ?string $comment = null
     ) {
         $this->id = Uuid::uuid4()->toString();
         $this->supplier = $supplier;
@@ -105,6 +114,7 @@ class Income
         $this->priceDocument = $priceDocument;
         $this->date = $date;
         $this->isSet = $isSet;
+        $this->comment = $comment;
         $this->amount = null;
 
         $date = DateTimeUtils::now();
@@ -201,28 +211,48 @@ class Income
     }
 
     /**
-     * @return \DateTimeImmutable     */
+     * @return string|null
+     */
+    public function getComment(): ?string
+    {
+        return $this->comment;
+    }
+
+    /**
+     * @param string|null $comment
+     */
+    public function setComment(?string $comment): void
+    {
+        $this->comment = $comment;
+    }
+
+    /**
+     * @return \DateTimeImmutable
+     */
     public function getDate(): \DateTimeImmutable
     {
         return $this->date;
     }
 
     /**
-     * @param \DateTimeImmutable $date     */
+     * @param \DateTimeImmutable $date
+     */
     public function setDate(\DateTimeImmutable $date): void
     {
         $this->date = $date;
     }
 
     /**
-     * @return bool     */
+     * @return bool
+     */
     public function isSet(): bool
     {
         return $this->isSet;
     }
 
     /**
-     * @param bool $isSet     */
+     * @param bool $isSet
+     */
     public function setIsSet(bool $isSet): void
     {
         $this->isSet = $isSet;

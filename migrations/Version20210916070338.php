@@ -22,6 +22,7 @@ final class Version20210916070338 extends AbstractMigration
      */
     public function up(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE incomes ADD is_set TINYINT(1) NOT NULL, ADD comment VARCHAR(255) DEFAULT NULL');
         $this->addSql("CREATE
         ALGORITHM = UNDEFINED
         DEFINER = `root`@`localhost`
@@ -60,14 +61,17 @@ final class Version20210916070338 extends AbstractMigration
             JOIN `characteristic_prices` ON ((`stock_changes`.`characteristic_id` = `characteristic_prices`.`characteristic`)))
             JOIN `characteristics` ON ((`stock_changes`.`characteristic_id` = `characteristics`.`id`)))
             JOIN `nomenclatures` ON ((`characteristics`.`nomenclature_id` = `nomenclatures`.`id`)))
+	    WHERE `stock_changes`.`is_set` = 1
         GROUP BY `characteristics`.`id` , `stock_documents`.`store_id`
         HAVING (`stock` > 0)");
     }
+
     /**
      * @param Schema $schema
      */
     public function down(Schema $schema): void
     {
+        $this->addSql('ALTER TABLE incomes DROP is_set, DROP comment');
         $this->addSql('DROP VIEW wares');
         $this->addSql('DROP VIEW characteristic_prices');
     }

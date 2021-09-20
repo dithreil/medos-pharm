@@ -36,15 +36,15 @@ class StockChangeNormalizer extends AbstractCustomNormalizer
             case self::TYPE_IN_INCOME_ROWS:
                 $result = [
                     'id' => $object->getId(),
-                    'nomenclature' => $object->getCharacteristic()->getNomenclature()->getName(),
-                    'producer' => $object->getCharacteristic()->getNomenclature()->getProducer()->getShortName(),
-                    'medicalForm' => NomenclatureDataProvider::getStringValueOfMedForms(
-                        $object->getCharacteristic()->getNomenclature()->getMedicalForm()
+                    'nomenclature' => $this->normalizer->normalize(
+                        $object->getCharacteristic()->getNomenclature(),
+                        $format,
+                        [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_LIST]
                     ),
-                    'serial' => $object->getCharacteristic()->getSerial(),
-                    'expire' =>  DateTimeUtils::formatDate(
-                        $object->getCharacteristic()->getExpireTime(),
-                        DateTimeUtils::FORMAT_EXPIRE
+                    'characteristic' => $this->normalizer->normalize(
+                        $object->getCharacteristic()->getNomenclature(),
+                        $format,
+                        [CharacteristicNormalizer::CONTEXT_TYPE_KEY => CharacteristicNormalizer::TYPE_IN_STOCK_CHANGE]
                     ),
                     'value' => $object->getValue(),
                     'purchasePrice' => $object->getPriceChange()->getOldValue(),
@@ -55,9 +55,10 @@ class StockChangeNormalizer extends AbstractCustomNormalizer
             case self::TYPE_IN_LIST:
                 $result = [
                     'id' => $object->getId(),
-                    'nomenclature' => $object->getCharacteristic()->getNomenclature()->getName(),
-                    'medicalForm' => NomenclatureDataProvider::getStringValueOfMedForms(
-                        $object->getCharacteristic()->getNomenclature()->getMedicalForm()
+                    'nomenclature' => $this->normalizer->normalize(
+                        $object->getCharacteristic()->getNomenclature(),
+                        $format,
+                        [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_LIST]
                     ),
                     'type' => $object->getDocument()->getType(),
                     'value' => $object->getValue(),
@@ -67,9 +68,15 @@ class StockChangeNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'store' => $object->getDocument()->getStore()->getName(),
-                    'nomenclature' => $object->getCharacteristic()->getNomenclature()->getName(),
-                    'medicalForm' => NomenclatureDataProvider::getStringValueOfMedForms(
-                        $object->getCharacteristic()->getNomenclature()->getMedicalForm()
+                    'nomenclature' => $this->normalizer->normalize(
+                        $object->getCharacteristic()->getNomenclature(),
+                        $format,
+                        [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_LIST]
+                    ),
+                    'characteristic' => $this->normalizer->normalize(
+                        $object->getCharacteristic()->getNomenclature(),
+                        $format,
+                        [CharacteristicNormalizer::CONTEXT_TYPE_KEY => CharacteristicNormalizer::TYPE_IN_STOCK_CHANGE]
                     ),
                     'type' => $object->getDocument()->getType(),
                     'value' => $object->getValue(),

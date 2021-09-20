@@ -11,6 +11,7 @@ class CharacteristicNormalizer extends AbstractCustomNormalizer
 {
     public const CONTEXT_TYPE_KEY = 'characteristic';
     public const TYPE_IN_LIST = 'in_list';
+    public const TYPE_IN_STOCK_CHANGE = 'in_stock_change';
 
     /**
      * @param mixed $data
@@ -42,6 +43,14 @@ class CharacteristicNormalizer extends AbstractCustomNormalizer
                         $format,
                         [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_CHARACTERISTIC]
                     ),
+                ];
+                break;
+            case self::TYPE_IN_STOCK_CHANGE:
+                $result = [
+                    'id' => $object->getId(),
+                    'serial' => $object->getSerial(),
+                    'expireOriginal' => DateTimeUtils::formatDate($object->getExpireTime()),
+                    'expire' => DateTimeUtils::formatDate($object->getExpireTime(), DateTimeUtils::FORMAT_EXPIRE),
                 ];
                 break;
             default:

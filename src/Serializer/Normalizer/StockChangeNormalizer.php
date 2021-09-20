@@ -4,7 +4,6 @@ declare(strict_types=1);
 
 namespace App\Serializer\Normalizer;
 
-use App\DataProvider\NomenclatureDataProvider;
 use App\Entity\Change\StockChange;
 use App\Utils\DateTimeUtils;
 
@@ -42,7 +41,7 @@ class StockChangeNormalizer extends AbstractCustomNormalizer
                         [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_LIST]
                     ),
                     'characteristic' => $this->normalizer->normalize(
-                        $object->getCharacteristic()->getNomenclature(),
+                        $object->getCharacteristic(),
                         $format,
                         [CharacteristicNormalizer::CONTEXT_TYPE_KEY => CharacteristicNormalizer::TYPE_IN_STOCK_CHANGE]
                     ),
@@ -74,7 +73,7 @@ class StockChangeNormalizer extends AbstractCustomNormalizer
                         [NomenclatureNormalizer::CONTEXT_TYPE_KEY => NomenclatureNormalizer::TYPE_IN_LIST]
                     ),
                     'characteristic' => $this->normalizer->normalize(
-                        $object->getCharacteristic()->getNomenclature(),
+                        $object->getCharacteristic(),
                         $format,
                         [CharacteristicNormalizer::CONTEXT_TYPE_KEY => CharacteristicNormalizer::TYPE_IN_STOCK_CHANGE]
                     ),

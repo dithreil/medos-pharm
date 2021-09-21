@@ -9,7 +9,7 @@ Encore
     .setOutputPath('public/build/')
     .setPublicPath('/build')
 
-    // .addEntry('app-admin-authorization', './assets/admin/js/app-admin-authorization/app-admin-authorization.js')
+    .addEntry('app-admin-authorization', './assets/admin/js/app-admin-authorization/app-admin-authorization.js')
     .addEntry('app-admin-main', './assets/admin/js/app.ts')
     // .addEntry('app-front', './assets/front/js/app.js')
 

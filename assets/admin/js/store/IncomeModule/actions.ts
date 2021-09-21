@@ -32,7 +32,7 @@ const actions: ActionTree<IDocumentIncomeInterface, StateInterface> = {
             });
     },
     editIncomeData({dispatch}, {id, payload}) {
-        return requests.put(apiConstants.INCOME.DETAILS(id), payload)
+        return requests.patch(apiConstants.INCOME.DETAILS(id), payload)
             .then((response) => {
                 dispatch('getIncomeList');
                 notifizer.success('Данные поступления изменены');

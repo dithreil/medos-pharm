@@ -1,4 +1,4 @@
-import {IPagination} from "../interfaces/request-params";
+import {IPagination} from '../interfaces/request-params';
 
 const selectPagination: IPagination = {
     descending: false,
@@ -10,4 +10,4 @@ const selectPagination: IPagination = {
 };
 export default {
     selectPagination,
-}
+};

@@ -1,5 +1,5 @@
 import {IListResponseData} from './request-params';
-import {IProducer} from "./producer";
+import {IProducer} from './producer';
 
 export interface INomenclature {
     id: string,
@@ -14,6 +14,13 @@ export interface INomenclatureCreateEditData {
     producer: string,
     medicalForm: string,
     isVat: boolean,
+}
+
+export interface ICharacteristic {
+    expire: string,
+    expireOriginal: string,
+    id: string | null,
+    serial: string,
 }
 
 export interface INomenclatureDetails extends INomenclature {

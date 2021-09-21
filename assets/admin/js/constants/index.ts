@@ -1,5 +1,5 @@
 import systemConstants from './systemConstants';
-import {IConstants} from "../interfaces/request-params";
+import {IConstants} from '../interfaces/request-params';
 
 
 declare module 'vue/types/vue' {

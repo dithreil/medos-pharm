@@ -10,7 +10,7 @@ import {IStoreInterface} from './StoreModule/state';
 import {IProducerInterface} from './ProducerModule/state';
 import {ISupplierInterface} from './SupplierModule/state';
 import {INomenclatureInterface} from './NomenclatureModule/state';
-import {IDocumentIncomeInterface} from "./IncomeModule/state";
+import {IDocumentIncomeInterface} from './IncomeModule/state';
 
 Vue.use(Vuex);
 

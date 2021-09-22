@@ -140,16 +140,17 @@
 <script lang="ts">
 import {mapActions, mapGetters} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
-import {Component, Prop, Ref, Vue} from 'vue-property-decorator';
+import {Component, Ref, Vue} from 'vue-property-decorator';
 import {IDocumentIncomeCreateEditData, IDocumentIncomeDetails} from '../../interfaces/income';
 import {QForm} from 'quasar';
 import {incomeCreate} from '../../models/CreateModels';
-import {IRequestParams, IServerResponse} from '../../interfaces/request-params';
+import {IRequestParams} from '../../interfaces/request-params';
 import {IStoreData} from '../../interfaces/store';
 import {ISupplierData} from '../../interfaces/supplier';
 import DocumentTable from '../../components/Document/DocumentTable.vue';
 import {prepareDocumentRows} from '../../utils/documentAdapter';
-import {INomenclatureCreateEditData} from '../../interfaces/nomenclature';
+import moment from 'moment';
+
 
 @Component({
     components: {DocumentTable},
@@ -157,6 +158,7 @@ import {INomenclatureCreateEditData} from '../../interfaces/nomenclature';
         ...mapGetters({
             suppliersData: 'supplier/suppliersData',
             storesData: 'store/storesData',
+            user: 'user/userData',
         }),
     },
     methods: {
@@ -169,9 +171,8 @@ import {INomenclatureCreateEditData} from '../../interfaces/nomenclature';
     },
 })
 export default class IncomeCreate extends Vue {
-  @Prop({type: String, required: true}) readonly incomeId!: string;
-
   @Ref('form') readonly form!: QForm;
+
   protected updateStoreRequestParams!: (payload: IRequestParams) => any;
   protected updateSupplierRequestParams!: (payload: IRequestParams) => any;
   protected createIncome!: ({payload}: {payload: IDocumentIncomeCreateEditData}) => any;
@@ -181,6 +182,9 @@ export default class IncomeCreate extends Vue {
 
   protected model: IDocumentIncomeDetails = JSON.parse(JSON.stringify(incomeCreate));
 
+  mounted() {
+      this.model.date = moment().format('DD.MM.YYYY HH:mm:SS');
+  }
 
   isFormInvalid() {
       return this.form.validate();

@@ -1,15 +1,13 @@
 <template>
         <q-table
+            title="Товары"
             style="margin: 30px"
             :data="tableRows"
             :columns="rowsTableColumns"
             no-results-label="Список товаров пуст"
-            binary-state-sort
         >
           <template v-slot:body="props">
-            <q-tr
-                :props="props "
-            >
+            <q-tr :props="props">
               <q-td key="index" :props="props">
                 <div class="row items-start q-gutter-xs cursor-pointer">
                   {{ tableRows.indexOf(props.row) + 1 }}
@@ -20,10 +18,11 @@
                   {{ props.row.nomenclature ? props.row.nomenclature.name : '' }}
                 </div>
                 <q-popup-edit auto-save v-model="props.row.nomenclature">
-                  <q-select
+                  <div class="row">
+                    <div class="col-11">
+                      <q-select
                       v-model="props.row.nomenclature"
                       option-label="name"
-                      clearable
                       emit-value
                       :options="nomenclaturesData.items || [] "
                       label="Выбрать номенклатуру"
@@ -54,6 +53,18 @@
                       </q-item>
                     </template>
                   </q-select>
+                    </div>
+                    <div class="col-1">
+                      <q-btn
+                          style="margin-top: 5px"
+                          flat
+                          @click="showNomenclatureCreateModal"
+                          round
+                          color="primary"
+                          icon="add"
+                      />
+                    </div>
+                  </div>
                 </q-popup-edit>
               </q-td>
               <q-td key="producer" :props="props">
@@ -144,6 +155,7 @@ import {IRequestParams} from '../../interfaces/request-params';
 import {ICharacteristic, INomenclatureData} from '../../interfaces/nomenclature';
 import {mapActions, mapGetters} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
+import NomenclatureCreateModal from '../../pages/Nomenclature/NomenclatureCreateModal.vue';
 @Component({
     computed: {
         ...mapGetters({
@@ -160,7 +172,7 @@ import * as validationHelpers from '../../validation/helpers';
 export default class DocumentTable extends Vue {
   @Prop({type: Array, default: () => []}) readonly tableRows!: Array<ITableRowIncome>;
 
-  protected selectedRow: ITableRowIncome | null = null;
+  // protected selectedRows: Array<ITableRowIncome> = [];
   protected updateNomenclatureRequestParams!: (payload: IRequestParams) => any;
   protected nomenclaturesData!: INomenclatureData;
 
@@ -208,5 +220,12 @@ export default class DocumentTable extends Vue {
       newExpireArr.shift();
       characteristic.expire = newExpireArr.join('/');
   }
+
+  showNomenclatureCreateModal() {
+      this.$q.dialog({
+          component: NomenclatureCreateModal,
+          parent: this,
+      });
+  };
 };
 </script>

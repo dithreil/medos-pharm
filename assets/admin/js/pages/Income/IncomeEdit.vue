@@ -147,7 +147,7 @@ import * as validationHelpers from '../../validation/helpers';
 import {Component, Prop, Ref, Vue} from 'vue-property-decorator';
 import {IDocumentIncomeCreateEditData, IDocumentIncomeDetails} from '../../interfaces/income';
 import {QForm} from 'quasar';
-import {incomeCreate, nomenclatureCreate} from '../../models/CreateModels';
+import {incomeCreate} from '../../models/CreateModels';
 import {IRequestParams, IServerResponse} from '../../interfaces/request-params';
 import {IStoreData} from '../../interfaces/store';
 import {ISupplierData} from '../../interfaces/supplier';

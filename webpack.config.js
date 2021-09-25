@@ -26,17 +26,17 @@ Encore
     })
     .enableVueLoader(() => {}, {runtimeCompilerBuild: false})
     .enableSassLoader()
-    .addLoader({
-        enforce: 'pre',
-        test: /\.(js|vue)$/,
-        loader: 'eslint-loader',
-        exclude: /node_modules/,
-        options: {
-            fix: false,
-            emitError: true,
-            emitWarning: true,
-        },
-    })
+    // .addLoader({
+    //     enforce: 'pre',
+    //     test: /\.(js|vue)$/,
+    //     loader: 'eslint-loader',
+    //     exclude: /node_modules/,
+    //     options: {
+    //         fix: false,
+    //         emitError: true,
+    //         emitWarning: true,
+    //     },
+    // })
 ;
 
 module.exports = Encore.getWebpackConfig();

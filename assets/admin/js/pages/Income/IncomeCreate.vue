@@ -122,7 +122,7 @@
               </q-select>
             </div>
           </div>
-          <DocumentTable :table-rows="model.rows" />
+          <DocumentTable :model="model" />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn
@@ -141,15 +141,15 @@
 import {mapActions, mapGetters} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
 import {Component, Ref, Vue} from 'vue-property-decorator';
-import {IDocumentIncomeCreateEditData, IDocumentIncomeDetails} from '../../interfaces/income';
+import {IDocumentIncomeCreateEditData} from '../../interfaces/income';
 import {QForm} from 'quasar';
-import {incomeCreate} from '../../models/CreateModels';
 import {IRequestParams} from '../../interfaces/request-params';
 import {IStoreData} from '../../interfaces/store';
 import {ISupplierData} from '../../interfaces/supplier';
 import DocumentTable from '../../components/Document/DocumentTable.vue';
-import {prepareDocumentRows} from '../../utils/documentAdapter';
 import moment from 'moment';
+import IncomeDocument from '../../models/IncomeDocument';
+import {error} from '../../utils/notifizer';
 
 
 @Component({
@@ -180,7 +180,7 @@ export default class IncomeCreate extends Vue {
   protected storesData!: IStoreData
   protected suppliersData!: ISupplierData
 
-  protected model: IDocumentIncomeDetails = JSON.parse(JSON.stringify(incomeCreate));
+  protected model: IncomeDocument = new IncomeDocument();
 
   mounted() {
       this.model.date = moment().format('DD.MM.YYYY HH:mm:SS');
@@ -197,31 +197,22 @@ export default class IncomeCreate extends Vue {
           });
   }
 
-  fetchSuppliers(val : string, update : () => any, abort: () => any) {
-      if (2 > val.length) {
-          abort();
-
-          return;
-      }
+  fetchSuppliers(val : string, update : () => any) {
       this.updateSupplierRequestParams({...this.$constants.systemConstants.selectPagination, filter: val})
           .finally(() => {
               update();
           });
   }
   async save() {
-      const isValid = await this.isFormInvalid();
+      const isValid = await this.model.isValid();
 
-      if (!isValid) return;
+      if (!isValid) {
+          error('Данные формы некорректны!');
 
-      const dataToServer: IDocumentIncomeCreateEditData = {
-          comment: '',
-          date: this.model.date,
-          storeId: this.model.store.id,
-          supplierId: this.model.supplier.id,
-          rows: prepareDocumentRows(this.model.rows),
-      };
+          return;
+      }
 
-      const response = await this.createIncome({payload: dataToServer});
+      const response = await this.createIncome({payload: this.model.getDataForServer()});
       if (201 === response.status) {
           await this.$router.push({name: 'IncomeList'});
       }

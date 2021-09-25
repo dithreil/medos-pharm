@@ -126,7 +126,7 @@
               </q-select>
             </div>
           </div>
-          <DocumentTable :table-rows="model.rows" />
+          <DocumentTable :model="model" />
         </q-card-section>
         <q-card-actions align="right">
           <q-btn
@@ -145,14 +145,14 @@
 import {mapActions, mapGetters} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
 import {Component, Prop, Ref, Vue} from 'vue-property-decorator';
-import {IDocumentIncomeCreateEditData, IDocumentIncomeDetails} from '../../interfaces/income';
+import {IDocumentIncomeCreateEditData} from '../../interfaces/income';
 import {QForm} from 'quasar';
-import {incomeCreate} from '../../models/CreateModels';
 import {IRequestParams, IServerResponse} from '../../interfaces/request-params';
 import {IStoreData} from '../../interfaces/store';
 import {ISupplierData} from '../../interfaces/supplier';
 import DocumentTable from '../../components/Document/DocumentTable.vue';
-import {prepareDocumentRows} from '../../utils/documentAdapter';
+import IncomeDocument from '../../models/IncomeDocument';
+import {error} from '../../utils/notifizer';
 
 @Component({
     components: {DocumentTable},
@@ -187,11 +187,11 @@ export default class IncomeEdit extends Vue {
   protected storesData!: IStoreData
   protected suppliersData!: ISupplierData
 
-  protected model: IDocumentIncomeDetails = JSON.parse(JSON.stringify(incomeCreate));
+  protected model: IncomeDocument = new IncomeDocument();
 
   async mounted() {
       const response = await this.getIncomeDetails(this.incomeId);
-      this.model = response.data;
+      this.model = new IncomeDocument(response.data);
   };
 
   isFormInvalid() {
@@ -206,11 +206,6 @@ export default class IncomeEdit extends Vue {
   }
 
   fetchSuppliers(val : string, update : () => any, abort: () => any) {
-      if (2 > val.length) {
-          abort();
-
-          return;
-      }
       this.updateSupplierRequestParams({...this.$constants.systemConstants.selectPagination, filter: val})
           .finally(() => {
               update();
@@ -218,19 +213,15 @@ export default class IncomeEdit extends Vue {
   }
 
   async save() {
-      const isValid = await this.isFormInvalid();
+      const isValid = await this.model.isValid();
 
-      if (!isValid) return;
+      if (!isValid) {
+          error('Данные формы некорректны!');
 
-      const dataToServer: IDocumentIncomeCreateEditData = {
-          comment: '',
-          date: this.model.date,
-          storeId: this.model.store.id,
-          supplierId: this.model.supplier.id,
-          rows: prepareDocumentRows(this.model.rows),
-      };
+          return;
+      }
 
-      const response = await this.editIncomeData({payload: dataToServer, id: this.model.id});
+      const response = await this.editIncomeData({payload: this.model.getDataForServer(), id: this.model.id});
       if (201 === response.status) {
           await this.$router.push({name: 'IncomeList'});
       }

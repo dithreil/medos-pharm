@@ -2,19 +2,26 @@
         <q-table
             title="Товары"
             style="margin: 30px"
-            :data="tableRows"
+            :data="model.rows"
             :columns="rowsTableColumns"
             no-results-label="Список товаров пуст"
+            :row-key="(row) => model.rows.indexOf(row)"
         >
           <template v-slot:body="props">
             <q-tr :props="props">
               <q-td key="index" :props="props">
                 <div class="row items-start q-gutter-xs cursor-pointer">
-                  {{ tableRows.indexOf(props.row) + 1 }}
+                  {{ props.key + 1 }}
                 </div>
               </q-td>
-              <q-td class="cursor-pointer" key="nomenclature" :props="props">
-                <div class="row items-start q-gutter-xs ">
+              <q-td
+                  :class="{'err-cell-underline': !props.row.nomenclature}"
+                  class="cursor-pointer"
+                  key="nomenclature"
+                  :props="props"
+              >
+                <div class="row items-start q-gutter-xs">
+
                   {{ props.row.nomenclature ? props.row.nomenclature.name : '' }}
                 </div>
                 <q-popup-edit auto-save v-model="props.row.nomenclature">
@@ -72,24 +79,44 @@
                   {{props.row.nomenclature ? props.row.nomenclature.producer.shortName : ''}}
                 </div>
               </q-td>
-              <q-td  class="cursor-pointer" key="serial" :props="props">
+              <q-td
+                  class="cursor-pointer"
+                  key="serial"
+                  :props="props"
+                  :class="{'err-cell-underline': !props.row.characteristic.serial}"
+              >
                 <div class="row items-start q-gutter-xs cursor-pointer">
                   {{props.row.characteristic.serial}}
                 </div>
                 <q-popup-edit auto-save v-model="props.row.characteristic.serial">
-                  <q-input v-model="props.row.characteristic.serial" dense autofocus />
+                  <q-input
+                      v-model="props.row.characteristic.serial"
+                      dense
+                      autofocus
+                      :rules="[
+                                    (val) => !!val || $errorMessages.REQUIRED,
+                                ]"
+                  />
                 </q-popup-edit>
               </q-td>
-              <q-td  class="cursor-pointer" key="expire" :props="props">
+              <q-td
+                  class="cursor-pointer"
+                  key="expire"
+                  :class="{'err-cell-underline': !props.row.characteristic.expireOriginal}"
+                  :props="props"
+              >
                 <div class="row items-start q-gutter-xs cursor-pointer">
                   {{props.row.characteristic.expire}}
                 </div>
                 <q-popup-edit auto-save v-model="props.row.characteristic.expireOriginal">
                   <q-input
-
                       autofocus
                       dense
                       v-model="props.row.characteristic.expireOriginal"
+                      @input="expireDateChanged(props.row.characteristic)"
+                      :rules="[
+                                    (val) => !!val || $errorMessages.REQUIRED,
+                                ]"
                   >
                     <template v-slot:append>
                       <q-icon name="event" class="cursor-pointer">
@@ -110,27 +137,63 @@
                 </q-popup-edit>
               </q-td>
 
-              <q-td key="value" :props="props">
+              <q-td
+                  key="value"
+                  :props="props"
+                  :class="{'err-cell-underline': !props.row.value}"
+              >
                 <div class="row items-start q-gutter-xs cursor-pointer">
                   {{props.row.value || 0 }} шт.
                   <q-popup-edit auto-save v-model="props.row.value">
-                    <q-input type="number" v-model.number="props.row.value" dense autofocus />
+                    <q-input
+                        type="number"
+                        v-model.number="props.row.value"
+                        dense
+                        autofocus
+                        :rules="[
+                                    (val) => !!val || $errorMessages.REQUIRED,
+                                ]"
+                    />
                   </q-popup-edit>
                 </div>
               </q-td>
-              <q-td key="purchasePrice" :props="props">
+              <q-td
+                  key="purchasePrice"
+                  :props="props"
+                  :class="{'err-cell-underline': !props.row.purchasePrice}"
+              >
                 <div class="row items-start q-gutter-xs cursor-pointer">
                   {{props.row.purchasePrice || 0 }} руб.
                   <q-popup-edit auto-save v-model="props.row.purchasePrice">
-                    <q-input type="number" v-model.number="props.row.purchasePrice" dense autofocus />
+                    <q-input
+                        type="number"
+                        v-model.number="props.row.purchasePrice"
+                        dense
+                        autofocus
+                        :rules="[
+                                    (val) => !!val || $errorMessages.REQUIRED,
+                                ]"
+                    />
                   </q-popup-edit>
                 </div>
               </q-td>
-              <q-td key="retailPrice" :props="props">
+              <q-td
+                  key="retailPrice"
+                  :props="props"
+                  :class="{'err-cell-underline': !props.row.retailPrice}"
+              >
                 <div class="row items-start q-gutter-xs cursor-pointer">
                   {{props.row.retailPrice || 0}} руб.
                   <q-popup-edit auto-save v-model="props.row.retailPrice">
-                    <q-input type="number" v-model.number="props.row.retailPrice" dense autofocus />
+                    <q-input
+                        type="number"
+                        v-model.number="props.row.retailPrice"
+                        dense
+                        autofocus
+                        :rules="[
+                                    (val) => !!val || $errorMessages.REQUIRED,
+                                ]"
+                    />
                   </q-popup-edit>
                 </div>
               </q-td>
@@ -150,12 +213,12 @@
 
 <script lang="ts">
 import {Component, Prop, Vue} from 'vue-property-decorator';
-import {ITableRowIncome} from '../../interfaces/income';
 import {IRequestParams} from '../../interfaces/request-params';
 import {ICharacteristic, INomenclatureData} from '../../interfaces/nomenclature';
 import {mapActions, mapGetters} from 'vuex';
 import * as validationHelpers from '../../validation/helpers';
 import NomenclatureCreateModal from '../../pages/Nomenclature/NomenclatureCreateModal.vue';
+import IncomeDocument from '../../models/IncomeDocument';
 @Component({
     computed: {
         ...mapGetters({
@@ -170,7 +233,7 @@ import NomenclatureCreateModal from '../../pages/Nomenclature/NomenclatureCreate
     },
 })
 export default class DocumentTable extends Vue {
-  @Prop({type: Array, default: () => []}) readonly tableRows!: Array<ITableRowIncome>;
+  @Prop({type: Object, default: () => []}) readonly model!: IncomeDocument;
 
   // protected selectedRows: Array<ITableRowIncome> = [];
   protected updateNomenclatureRequestParams!: (payload: IRequestParams) => any;
@@ -200,22 +263,15 @@ export default class DocumentTable extends Vue {
           });
   }
   addRowToTable() {
-      const newRow: ITableRowIncome = {
-          nomenclature: null,
-          retailPrice: null,
-          purchasePrice: null,
-          value: null,
-          characteristic: {
-              id: null,
-              expire: '',
-              serial: '',
-              expireOriginal: '',
-          },
-      };
-      this.tableRows.push(newRow);
+      this.model.addNewRow();
   }
 
   expireDateChanged(characteristic: ICharacteristic) {
+      if (!characteristic.expireOriginal) {
+          characteristic.expire = '';
+
+          return;
+      }
       const newExpireArr: Array<string> = characteristic.expireOriginal.split('.');
       newExpireArr.shift();
       characteristic.expire = newExpireArr.join('/');
@@ -229,3 +285,10 @@ export default class DocumentTable extends Vue {
   };
 };
 </script>
+<style>
+.err-cell-underline {
+  border-bottom: red 2px dotted !important;
+  line-height:2em;
+}
+
+</style>

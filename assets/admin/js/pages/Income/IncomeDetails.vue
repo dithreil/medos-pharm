@@ -50,9 +50,9 @@
 <script lang="ts">
 import {mapActions} from 'vuex';
 import {Component, Prop, Vue} from 'vue-property-decorator';
-import {IDocumentIncomeDetails, ITableRowIncome} from '../../interfaces/income';
-import {incomeCreate} from '../../models/CreateModels';
+import {ITableRowIncome} from '../../interfaces/income';
 import {IServerResponse} from '../../interfaces/request-params';
+import IncomeDocument from "../../models/IncomeDocument";
 @Component({
     methods: {
         ...mapActions({
@@ -64,7 +64,7 @@ export default class IncomeDetails extends Vue {
   @Prop({type: String, required: true}) readonly incomeId!: string;
   protected getIncomeDetails!: (id: string) => IServerResponse;
 
-  protected model: IDocumentIncomeDetails = JSON.parse(JSON.stringify(incomeCreate));
+  protected model: IncomeDocument = new IncomeDocument();
 
   private rowsTableColumns = [
       {name: 'index', align: 'left', label: 'Id', sortable: true},
@@ -81,7 +81,7 @@ export default class IncomeDetails extends Vue {
 
   async mounted() {
       const response = await this.getIncomeDetails(this.incomeId);
-      this.model = response.data;
+      this.model = new IncomeDocument(response.data);
   };
 };
 </script>

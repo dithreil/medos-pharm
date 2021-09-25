@@ -2,7 +2,6 @@ import {IProducer} from '../interfaces/producer';
 import {ISupplier} from '../interfaces/supplier';
 import {IStore} from '../interfaces/store';
 import {INomenclature} from '../interfaces/nomenclature';
-import {IDocumentIncome} from '../interfaces/income';
 
 const producerCreate: IProducer = {
     id: '',
@@ -35,11 +34,4 @@ const storeCreate: IStore = {
     description: '',
 };
 
-const incomeCreate: IDocumentIncome = {
-    rows: [],
-    supplier: supplierCreate,
-    store: storeCreate,
-    date: '',
-    id: '',
-};
-export {incomeCreate, producerCreate, nomenclatureCreate, supplierCreate, storeCreate};
+export {producerCreate, nomenclatureCreate, supplierCreate, storeCreate};

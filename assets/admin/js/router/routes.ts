@@ -47,6 +47,22 @@ const routes: RouteConfig[] = [
         path: '/incomes',
         name: 'IncomeList',
         component: () => import('../pages/Income/IncomeList.vue'),
+    },
+    {
+        path: '/incomes/create',
+        name: 'IncomeCreate',
+        component: () => import('../pages/Income/IncomeCreate.vue'),
+    },
+    {
+        path: '/incomes/:incomeId/edit',
+        name: 'IncomeEdit',
+        component: () => import('../pages/Income/IncomeEdit.vue'),
+        props: true,
+    },
+    {
+        path: '/incomes/:incomeId',
+        name: 'IncomeDetails',
+        component: () => import('../pages/Income/IncomeDetails.vue'),
         props: true,
     },
 ];

@@ -33,4 +33,5 @@ const storeCreate: IStore = {
     address: '',
     description: '',
 };
+
 export {producerCreate, nomenclatureCreate, supplierCreate, storeCreate};

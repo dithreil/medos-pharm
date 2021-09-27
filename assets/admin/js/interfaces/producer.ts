@@ -1,4 +1,4 @@
-import {IListResponseData} from "./request-params";
+import {IListResponseData} from './request-params';
 
 export interface IProducer {
     id: string,

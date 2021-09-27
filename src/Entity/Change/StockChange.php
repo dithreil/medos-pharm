@@ -169,6 +169,32 @@ class StockChange
     }
 
     /**
+     * @param string $nomenclature
+     * @param string $serial
+     * @param string $expire
+     * @param float $purchasePrice
+     * @param float $retailPrice
+     * @param float $value
+     * @return bool
+     * @throws AppException
+     */
+    public function isEqualToNewRow(
+        string $nomenclature,
+        string $serial,
+        string $expire,
+        float $purchasePrice,
+        float $retailPrice,
+        float $value
+    ): bool {
+        $expireTime = DateTimeUtils::parse($expire);
+        return $this->getCharacteristic()->getNomenclature()->getId() === $nomenclature
+            && $this->getCharacteristic()->getSerial() === $serial
+            && $this->getPriceChange()->getOldValue() === $purchasePrice
+            && $this->getPriceChange()->getNewValue() === $retailPrice
+            && $this->getValue() === $value;
+    }
+
+    /**
      * @return bool
      */
     public function isSet(): bool

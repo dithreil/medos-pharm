@@ -194,6 +194,118 @@ class IncomeController extends AbstractController
     }
 
     /**
+     * @Route(path="/{id}", methods={"PUT"}, name="app.admin.api.incomes.put_edit")
+     * @OA\Put(
+     *     tags={"Админка. Управление приходными накладными"},
+     *     summary="Изменение приходной накладной",
+     *     description="Изменение существующей приходной накладной",
+     *     @OA\Parameter(
+     *         name="id",
+     *         in="path",
+     *         description="id приходной накладной",
+     *         required=true,
+     *         @OA\Schema(type="string")
+     *     ),
+     *     @OA\RequestBody(
+     *         description="Данные номенклатуры",
+     *         @OA\MediaType(
+     *             mediaType="application/json",
+     *             @OA\Schema(
+     *                 type="object",
+     *             @OA\Property(property="date", description="дата накладной", type="string"),
+     *             @OA\Property(property="supplierId", description="id поставщика", type="string"),
+     *             @OA\Property(property="storeId", description="id склада", type="string"),
+     *             @OA\Property(property="comment", description="комментарий сотрудника", type="string", nullable=true),
+     *             @OA\Property(
+     *                  property="rows",
+     *                  type="array",
+     *                  @OA\Items(
+     *                      @OA\Property(
+     *                         property="nomenclature",
+     *                         type="string",
+     *                         description="id номенклатуры"
+     *                      ),
+     *                      @OA\Property(
+     *                         property="serial",
+     *                         type="string",
+     *                         description="серия"
+     *                      ),
+     *                      @OA\Property(
+     *                         property="expire",
+     *                         type="string",
+     *                         description="срок годности"
+     *                      ),
+     *                      @OA\Property(
+     *                         property="value",
+     *                         type="number",
+     *                         description="кол-во поступления"
+     *                      ),
+     *                      @OA\Property(
+     *                         property="purchasePrice",
+     *                         type="number",
+     *                         description="цена закупки"
+     *                      ),
+     *                      @OA\Property(
+     *                         property="retailPrice",
+     *                         type="number",
+     *                         description="цена реализации"
+     *                      ),
+     *                  )
+     *              )
+     *             )
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=200,
+     *         description="Операция выполнена",
+     *         @OA\JsonContent(
+     *             @OA\Property(property="id", type="string", example="id"),
+     *             @OA\Property(property="store", type="object"),
+     *             @OA\Property(property="supplier", type="object"),
+     *             @OA\Property(property="createTime", type="string", example="24.05.2021 17:38:35"),
+     *             @OA\Property(property="updateTime", type="string", example="26.05.2021 13:20:15"),
+     *         )
+     *     ),
+     *     @OA\Response(
+     *         response=400,
+     *         description="Ошибка валидации"
+     *     )
+     * )
+     * @param IncomeManager $manager
+     * @param ValidatorInterface $validator
+     * @param CreateIncomeSchema $incomeSchema
+     * @param string $id
+     * @return JsonResponse
+     */
+    public function editAction(
+        IncomeManager $manager,
+        ValidatorInterface $validator,
+        CreateIncomeSchema $incomeSchema,
+        string $id
+    ): JsonResponse {
+        try {
+            $errors = $validator->validate($incomeSchema);
+
+            if ($errors->count() > 0) {
+                throw new ConstraintsValidationException($errors, Response::HTTP_BAD_REQUEST);
+            }
+
+            $income = $manager->edit(
+                $id,
+                $incomeSchema->date,
+                $incomeSchema->supplierId,
+                $incomeSchema->storeId,
+                $incomeSchema->rows,
+                $incomeSchema->comment
+            );
+        } catch (AppException $e) {
+            throw new ApiException($e);
+        }
+
+        return $this->json($income, Response::HTTP_OK);
+    }
+
+    /**
      * @Route(path="/{id}", methods={"GET"}, name="app.admin.api.incomes.get_details")
      * @OA\Get(
      *     tags={"Админка. Управление приходными накладными"},

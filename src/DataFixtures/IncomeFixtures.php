@@ -51,19 +51,34 @@ class IncomeFixtures extends Fixture implements DependentFixtureInterface
         $manager->persist($stockDocument);
         $manager->flush();
 
-        $characteristicY = new Characteristic($yarina, "YA29212", $butch, DateTimeUtils::now()->modify('+ 2 years'));
+        $characteristicY = new Characteristic(
+            $yarina,
+            "YA29212",
+            $butch,
+            DateTimeUtils::now()->modify('+ 2 years')->setTimezone(new \DateTimeZone('Europe/Moscow'))
+        );
 
         $manager->persist($characteristicY);
         $yarina->addCharacteristic($characteristicY);
         $manager->flush();
 
-        $characteristicB = new Characteristic($bepanten, "B123", $butch, DateTimeUtils::now()->modify('+ 3 years'));
+        $characteristicB = new Characteristic(
+            $bepanten,
+            "B123",
+            $butch,
+            DateTimeUtils::now()->modify('+ 3 years')->setTimezone(new \DateTimeZone('Europe/Moscow'))
+        );
 
         $manager->persist($characteristicB);
         $bepanten->addCharacteristic($characteristicB);
         $manager->flush();
 
-        $characteristicA = new Characteristic($almagelA, "A333", $butch, DateTimeUtils::now()->modify('+ 4 years'));
+        $characteristicA = new Characteristic(
+            $almagelA,
+            "A333",
+            $butch,
+            DateTimeUtils::now()->modify('+ 4 years')->setTimezone(new \DateTimeZone('Europe/Moscow'))
+        );
 
         $manager->persist($characteristicA);
         $almagelA->addCharacteristic($characteristicA);

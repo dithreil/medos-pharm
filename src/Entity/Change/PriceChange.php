@@ -159,7 +159,6 @@ class PriceChange
     public function setStockChange(?StockChange $stockChange): void
     {
         $this->stockChange = $stockChange;
-
     }
 
     /**

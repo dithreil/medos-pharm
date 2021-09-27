@@ -5,11 +5,15 @@ declare(strict_types=1);
 namespace App\Manager\Document;
 
 use App\DataProvider\DocumentDataProvider;
+use App\Entity\Change\PriceChange;
+use App\Entity\Change\StockChange;
 use App\Entity\Document\Income;
+use App\Entity\Price;
 use App\Exception\AppException;
 use App\Manager\Change\PriceChangeManager;
 use App\Manager\Change\StockChangeManager;
 use App\Manager\CharacteristicManager;
+use App\Manager\PriceManager;
 use App\Manager\StoreManager;
 use App\Manager\SupplierManager;
 use App\Model\PaginatedDataModel;
@@ -41,6 +45,11 @@ class IncomeManager
     private StockChangeManager $stockChangeManager;
 
     /**
+     * @var PriceManager
+     */
+    private PriceManager $priceManager;
+
+    /**
      * @var PriceChangeManager
      */
     private PriceChangeManager $priceChangeManager;
@@ -68,6 +77,7 @@ class IncomeManager
     /**
      * @param IncomeRepository $incomeRepository
      * @param CharacteristicManager $characteristicManager
+     * @param PriceManager $priceManager
      * @param PriceChangeManager $priceChangeManager
      * @param PriceDocumentManager $priceDocumentManager
      * @param StockChangeManager $stockChangeManager
@@ -78,6 +88,7 @@ class IncomeManager
     public function __construct(
         IncomeRepository $incomeRepository,
         CharacteristicManager $characteristicManager,
+        PriceManager $priceManager,
         PriceChangeManager $priceChangeManager,
         PriceDocumentManager $priceDocumentManager,
         StockChangeManager $stockChangeManager,
@@ -87,6 +98,7 @@ class IncomeManager
     ) {
         $this->incomeRepository = $incomeRepository;
         $this->characteristicManager = $characteristicManager;
+        $this->priceManager = $priceManager;
         $this->priceChangeManager = $priceChangeManager;
         $this->priceDocumentManager = $priceDocumentManager;
         $this->stockChangeManager = $stockChangeManager;
@@ -100,16 +112,12 @@ class IncomeManager
      * @param string $supplierId
      * @param string $storeId
      * @param array $rows
+     * @param string|null $comment
      * @return Income
      * @throws AppException
      */
-    public function create(
-        string $date,
-        string $supplierId,
-        string $storeId,
-        array $rows,
-        ?string $comment
-    ): Income {
+    public function create(string $date, string $supplierId, string $storeId, array $rows, ?string $comment): Income
+    {
         $supplier = $this->supplierManager->get($supplierId);
         $store = $this->storeManager->get($storeId);
         $butch = DateTimeUtils::now()->getTimestamp();
@@ -154,6 +162,115 @@ class IncomeManager
         $income->setAmount($amount);
         $stockDocument->setIncome($income);
         $priceDocument->setIncome($income);
+        $this->entityManager->flush();
+
+        return $income;
+    }
+
+    /**
+     * @param string $id
+     * @param string $date
+     * @param string $supplierId
+     * @param string $storeId
+     * @param array $rows
+     * @param string|null $comment
+     * @return Income
+     * @throws AppException
+     */
+    public function edit(
+        string $id,
+        string $date,
+        string $supplierId,
+        string $storeId,
+        array $rows,
+        ?string $comment
+    ): Income {
+        $income = $this->get($id);
+
+        if ($income->isSet()) {
+            throw new AppException("Current income already entered, action not allowed!");
+        }
+
+        $newSupplier = $this->supplierManager->get($supplierId);
+        $newStore = $this->storeManager->get($storeId);
+        $butch = DateTimeUtils::now()->getTimestamp();
+
+        $stockDocument = $income->getStockDocument();
+        $priceDocument = $income->getPriceDocument();
+
+        $oldRows = $stockDocument->getStockChanges();
+        $editRows = $rows;
+        $sameRows = [];
+        foreach ($oldRows as $oldRow) {
+            $isEqualToNewRow = false;
+            foreach ($editRows as $key => $row) {
+                $isEqualToNewRow = $oldRow->isEqualToNewRow(
+                    $row['nomenclature'],
+                    $row['serial'],
+                    $row['expire'],
+                    $row['purchasePrice'],
+                    $row['retailPrice'],
+                    $row['value']
+                );
+                if ($isEqualToNewRow) {
+                    $oldRow->getCharacteristic()->setButch($butch);
+                    $sameRows[$key] = $row;
+                    unset($editRows[$key]);
+                    break;
+                }
+            }
+            if (!$isEqualToNewRow) {
+                $priceChange = $oldRow->getPriceChange();
+                $price = $this->priceManager->findByStoreAndCharacteristic(
+                    $income->getStore()->getId(),
+                    $priceChange->getCharacteristic()->getId()
+                );
+                if ($oldRow instanceof StockChange) {
+                    $this->entityManager->remove($oldRow);
+                }
+                if ($priceChange instanceof PriceChange) {
+                    $this->entityManager->remove($priceChange);
+                }
+                if ($price instanceof Price) {
+                    $this->entityManager->remove($price);
+                }
+            }
+        }
+        if (count($editRows) > 0) {
+            foreach ($editRows as $row) {
+                $characteristic = $this->characteristicManager->create(
+                    $row['nomenclature'],
+                    $row['serial'],
+                    $butch,
+                    $row['expire']
+                );
+                $priceChange = $this->priceChangeManager->create(
+                    $priceDocument->getId(),
+                    $characteristic->getId(),
+                    $row['purchasePrice'],
+                    $row['retailPrice']
+                );
+                $stockChange = $this->stockChangeManager->create(
+                    $stockDocument->getId(),
+                    $characteristic->getId(),
+                    $row['value'],
+                    $priceChange
+                );
+                $priceChange->setStockChange($stockChange);
+            }
+        }
+        if ($income->getDate() !== DateTimeUtils::parse($date)) {
+            $income->setDate(DateTimeUtils::parse($date));
+        }
+        if ($income->getStore() !== $newStore) {
+            $income->setStore($newStore);
+        }
+        if ($income->getSupplier() !== $newSupplier) {
+            $income->setSupplier($newSupplier);
+        }
+        $income->setComment($comment);
+        $amount = $this->getAmount($income->getId());
+        $income->setAmount($amount);
         $this->entityManager->flush();
 
         return $income;

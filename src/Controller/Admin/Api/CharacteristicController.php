@@ -8,7 +8,6 @@ use App\Exception\ApiException;
 use App\Exception\AppException;
 use App\Exception\ConstraintsValidationException;
 use App\Manager\CharacteristicManager;
-use App\Manager\NomenclatureManager;
 use App\Model\Characteristic\CreateCharacteristicSchema;
 use App\Serializer\Normalizer\CharacteristicNormalizer;
 use OpenApi\Annotations as OA;
@@ -75,11 +74,11 @@ class CharacteristicController extends AbstractController
      *     )
      * )
      * @param Request $request
-     * @param NomenclatureManager $manager
+     * @param CharacteristicManager $manager
      * @return JsonResponse
      * @throws ApiException
      */
-    public function listAction(Request $request, NomenclatureManager $manager): JsonResponse
+    public function listAction(Request $request, CharacteristicManager $manager): JsonResponse
     {
         try {
             $filters = $request->query->all();
@@ -272,14 +271,14 @@ class CharacteristicController extends AbstractController
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="номенклатура не найдена"
+     *         description="Характеристика не найдена"
      *     )
      * )
-     * @param NomenclatureManager $manager
+     * @param CharacteristicManager $manager
      * @param string $id
      * @return JsonResponse
      */
-    public function detailsAction(string $id, NomenclatureManager $manager): JsonResponse
+    public function detailsAction(string $id, CharacteristicManager $manager): JsonResponse
     {
         try {
             $payload = $manager->get($id);

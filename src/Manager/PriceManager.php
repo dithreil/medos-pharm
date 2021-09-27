@@ -88,4 +88,16 @@ class PriceManager
 
         return $result;
     }
+
+    /**
+     * @param string $store
+     * @param string $characteristic
+     * @return Price|null
+     */
+    public function findByStoreAndCharacteristic(string $store, string $characteristic): ?Price
+    {
+        $result = $this->priceRepository->findOneBy(['store' => $store, 'characteristic' => $characteristic]);
+
+        return $result;
+    }
 }

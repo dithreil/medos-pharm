@@ -49,7 +49,7 @@ class CharacteristicNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'serial' => $object->getSerial(),
-                    'expireOriginal' => DateTimeUtils::formatDate($object->getExpireTime()),
+                    'expireOriginal' => DateTimeUtils::formatDate($object->getExpireTime(), DateTimeUtils::FORMAT_DATE),
                     'expire' => DateTimeUtils::formatDate($object->getExpireTime(), DateTimeUtils::FORMAT_EXPIRE),
                 ];
                 break;

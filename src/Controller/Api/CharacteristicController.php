@@ -7,7 +7,6 @@ namespace App\Controller\Api;
 use App\Exception\ApiException;
 use App\Exception\AppException;
 use App\Manager\CharacteristicManager;
-use App\Manager\NomenclatureManager;
 use App\Serializer\Normalizer\CharacteristicNormalizer;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
@@ -120,14 +119,14 @@ class CharacteristicController extends AbstractController
      *     ),
      *     @OA\Response(
      *         response=404,
-     *         description="номенклатура не найдена"
+     *         description="Характеристика не найдена"
      *     )
      * )
-     * @param NomenclatureManager $manager
+     * @param CharacteristicManager $manager
      * @param string $id
      * @return JsonResponse
      */
-    public function detailsAction(string $id, NomenclatureManager $manager): JsonResponse
+    public function detailsAction(string $id, CharacteristicManager $manager): JsonResponse
     {
         try {
             $payload = $manager->get($id);

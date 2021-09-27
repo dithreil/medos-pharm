@@ -45,6 +45,11 @@ class EmployeeNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'email' => $object->getRealEmail(),
+                    'store' => $this->normalizer->normalize(
+                        $object->getStore(),
+                        $format,
+                        [StoreNormalizer::CONTEXT_TYPE_KEY => StoreNormalizer::TYPE_IN_LIST]
+                    ),
                     'fullName' => $object->getFullName(),
                     'isActive' => $object->isActive(),
                     'phoneNumber' => $object->getRealPhoneNumber()
@@ -60,6 +65,11 @@ class EmployeeNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'email' => $object->getRealEmail(),
+                    'store' => $this->normalizer->normalize(
+                        $object->getStore(),
+                        $format,
+                        [StoreNormalizer::CONTEXT_TYPE_KEY => StoreNormalizer::TYPE_IN_LIST]
+                    ),
                     'lastName' => $object->getLastName(),
                     'firstName' => $object->getFirstName(),
                     'patronymic' => $object->getPatronymic(),

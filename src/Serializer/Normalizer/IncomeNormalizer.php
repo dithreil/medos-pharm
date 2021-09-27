@@ -35,6 +35,7 @@ class IncomeNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'date' => DateTimeUtils::formatDate($object->getDate()),
+                    'isSet' => $object->isSet(),
                     'amount' => $object->getAmount(),
                     'store' => $this->normalizer->normalize(
                         $object->getStore(),
@@ -53,6 +54,7 @@ class IncomeNormalizer extends AbstractCustomNormalizer
                 $result = [
                     'id' => $object->getId(),
                     'date' => DateTimeUtils::formatDate($object->getDate()),
+                    'isSet' => $object->isSet(),
                     'amount' => $object->getAmount(),
                     'store' => $this->normalizer->normalize(
                         $object->getStore(),

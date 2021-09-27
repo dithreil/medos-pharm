@@ -4,7 +4,9 @@ declare(strict_types=1);
 
 namespace App\Controller\Api;
 
+use App\Entity\Employee;
 use App\Exception\ApiException;
+use App\Serializer\Normalizer\EmployeeNormalizer;
 use OpenApi\Annotations as OA;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
@@ -38,6 +40,9 @@ class UserController extends AbstractController
             throw new ApiException($e);
         }
 
+        if ($payload instanceof Employee) {
+            return $this->json($payload, Response::HTTP_OK, [], [EmployeeNormalizer::CONTEXT_TYPE_KEY => EmployeeNormalizer::TYPE_LIST]);
+        }
         return $this->json($payload, Response::HTTP_OK);
     }
 }

@@ -6,6 +6,8 @@
 /public/bundles/
 /var/
 /vendor/
+
+/tests/jest/coverage
 ###< symfony/framework-bundle ###
 
 ###> symfony/phpunit-bridge ###

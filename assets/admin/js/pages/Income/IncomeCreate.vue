@@ -18,7 +18,7 @@
       <q-form
           class="emploee-edit__form col w-100"
           ref="form"
-          @submit="save"
+          @submit="saveOnly"
       >
         <q-card-section>
           <div class="text-h6">
@@ -56,7 +56,7 @@
                   v-model="model.store"
                   option-label="name"
                   emit-value
-                  :options="storesData.items || [] "
+                  :options="storeTableData"
                   label="Торговая точка"
                   use-input
                   filled
@@ -91,7 +91,7 @@
                   v-model="model.supplier"
                   option-label="name"
                   emit-value
-                  :options="suppliersData.items || [] "
+                  :options="supplierTableData"
                   label="Поставщик"
                   use-input
                   filled
@@ -124,12 +124,19 @@
           </div>
           <DocumentTable :model="model" />
         </q-card-section>
-        <q-card-actions align="right">
+        <q-card-actions align="left">
           <q-btn
               unelevated
               label="Сохранить"
               color="primary"
               type="submit"
+          />
+          <q-btn
+              unelevated
+              label="Провести"
+              color="primary"
+              type="submit"
+              @click="saveAndPost"
           />
         </q-card-actions>
       </q-form>
@@ -158,11 +165,12 @@ import {error} from '../../utils/notifizer';
         ...mapGetters({
             suppliersData: 'supplier/suppliersData',
             storesData: 'store/storesData',
-            user: 'user/userData',
+            // user: 'user/userData',
         }),
     },
     methods: {
         ...mapActions({
+            postIncome: 'income/postIncome',
             createIncome: 'income/createIncome',
             updateStoreRequestParams: 'store/updateStoreRequestParams',
             updateSupplierRequestParams: 'supplier/updateSupplierRequestParams',
@@ -176,11 +184,22 @@ export default class IncomeCreate extends Vue {
   protected updateStoreRequestParams!: (payload: IRequestParams) => any;
   protected updateSupplierRequestParams!: (payload: IRequestParams) => any;
   protected createIncome!: ({payload}: {payload: IDocumentIncomeCreateEditData}) => any;
+  protected postIncome!: ({payload}: {payload: {action: string}, id: string}) => any;
+
 
   protected storesData!: IStoreData
   protected suppliersData!: ISupplierData
 
   protected model: IncomeDocument = new IncomeDocument();
+
+  get storeTableData() {
+      return this.storesData?.items || [];
+  };
+
+  get supplierTableData() {
+      return this.suppliersData?.items || [];
+  };
+
 
   mounted() {
       this.model.date = moment().format('DD.MM.YYYY HH:mm:SS');
@@ -203,19 +222,35 @@ export default class IncomeCreate extends Vue {
               update();
           });
   }
-  async save() {
+  async saveDocument() {
       const isValid = await this.model.isValid();
 
       if (!isValid) {
           error('Данные формы некорректны!');
 
-          return;
+          return null;
       }
 
-      const response = await this.createIncome({payload: this.model.getDataForServer()});
-      if (201 === response.status) {
-          await this.$router.push({name: 'IncomeList'});
-      }
+      return await this.createIncome({payload: this.model.getDataForServer()});
   };
+
+  async saveOnly() {
+      const response = await this.saveDocument();
+
+      if (response && 201 === response.status) {
+          await this.$router.push({name: 'IncomeEdit', params: {id: response.data.id}});
+      }
+  }
+
+  async saveAndPost() {
+      const response = await this.saveDocument();
+
+      if (response && 201 === response.status) {
+          const postResponse = await this.postIncome({id: response.data.id, payload: {action: 'income.enter'}});
+          if (204 === postResponse.status) {
+              await this.$router.push({name: 'IncomeEdit', params: {id: response.data.id}});
+          }
+      }
+  }
 };
 </script>

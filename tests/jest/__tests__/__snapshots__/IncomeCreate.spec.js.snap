@@ -1,0 +1,148 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IncomeCreate matches snapshot 1`] = `
+<div>
+  <q-breadcrumbs-stub
+    activecolor="primary"
+    class="q-mb-xl employee-details__breadcrumbs"
+    gutter="sm"
+    separator="/"
+  >
+    <q-breadcrumbs-el-stub
+      icon="home"
+    >
+      <a
+        class="q-breadcrumbs__el q-link"
+        href="/admin"
+      >
+        Панель Администратора
+      </a>
+    </q-breadcrumbs-el-stub>
+     
+    <q-breadcrumbs-el-stub
+      icon="widgets"
+      label="Поступления товаров"
+      to="[object Object]"
+    />
+     
+    <q-breadcrumbs-el-stub
+      icon="face"
+      label="Создание поступления товаров"
+    />
+  </q-breadcrumbs-stub>
+   
+  <q-card-stub
+    class="emploee-edit"
+    tag="div"
+  >
+    <q-form-stub
+      class="emploee-edit__form col w-100"
+    >
+      <q-card-section-stub
+        tag="div"
+      >
+        <div
+          class="text-h6"
+        >
+          
+          Создать поступление товаров
+        
+        </div>
+      </q-card-section-stub>
+       
+      <q-card-section-stub
+        tag="div"
+      >
+        <div
+          class="row"
+        >
+          <div
+            class="col-4"
+            style="padding: 0px 30px;"
+          >
+            <q-input-stub
+              filled="true"
+              type="text"
+              value=""
+            />
+          </div>
+           
+          <div
+            class="col-4"
+            style="padding: 0px 30px;"
+          >
+            <q-select-stub
+              behavior="menu"
+              emitvalue="true"
+              filled="true"
+              inputdebounce="500"
+              label="Торговая точка"
+              lazyrules="true"
+              optionlabel="name"
+              options=""
+              rules="[Function]"
+              tabindex="0"
+              useinput="true"
+              value="[object Object]"
+              virtualscrollsliceratioafter="1"
+              virtualscrollsliceratiobefore="1"
+              virtualscrollstickysizeend="0"
+              virtualscrollstickysizestart="0"
+            />
+          </div>
+           
+          <div
+            class="col-4"
+            style="padding: 0px 30px;"
+          >
+            <q-select-stub
+              behavior="menu"
+              emitvalue="true"
+              filled="true"
+              inputdebounce="500"
+              label="Поставщик"
+              lazyrules="true"
+              optionlabel="name"
+              options=""
+              rules="[Function]"
+              tabindex="0"
+              useinput="true"
+              value="[object Object]"
+              virtualscrollsliceratioafter="1"
+              virtualscrollsliceratiobefore="1"
+              virtualscrollstickysizeend="0"
+              virtualscrollstickysizestart="0"
+            />
+          </div>
+        </div>
+         
+        <documenttable-stub
+          model="[object Object]"
+        />
+      </q-card-section-stub>
+       
+      <q-card-actions-stub
+        align="left"
+      >
+        <q-btn-stub
+          align="center"
+          color="primary"
+          label="Сохранить"
+          ripple="true"
+          type="submit"
+          unelevated="true"
+        />
+         
+        <q-btn-stub
+          align="center"
+          color="primary"
+          label="Провести"
+          ripple="true"
+          type="submit"
+          unelevated="true"
+        />
+      </q-card-actions-stub>
+    </q-form-stub>
+  </q-card-stub>
+</div>
+`;

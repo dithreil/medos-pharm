@@ -1,0 +1,45 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`IncomeList matches snapshot 1`] = `
+<div
+  class="page-bottom-margin"
+>
+  <div
+    class="row no-wrap justify-between items-center"
+  >
+    <h1
+      class="text-h4 text-primary"
+    >
+      
+      Список поступлений
+    
+    </h1>
+     
+    <q-btn-stub
+      align="center"
+      color="primary"
+      flat="true"
+      label="Создать поступление товаров"
+      ripple="true"
+      to="[object Object]"
+    />
+  </div>
+   
+  <q-table-stub
+    binarystatesort="true"
+    color="grey-8"
+    columns="[object Object],[object Object],[object Object],[object Object]"
+    data="[object Object],[object Object],[object Object],[object Object],[object Object],[object Object]"
+    filter=""
+    filtermethod="[Function]"
+    noresultslabel="Список поступлений пуст"
+    pagination="[object Object]"
+    rowkey="id"
+    rowsperpageoptions="5,7,10,15,20,25,50,0"
+    selected=""
+    selection="none"
+    separator="horizontal"
+    sortmethod="[Function]"
+  />
+</div>
+`;

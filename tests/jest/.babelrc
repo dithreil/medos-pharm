@@ -1,0 +1,23 @@
+{
+  "plugins": ["@babel/plugin-syntax-dynamic-import"],
+  "env": {
+    "test": {
+      "plugins": ["@babel/plugin-syntax-dynamic-import"],
+      "presets": [
+        [
+          "@babel/preset-env",
+          {
+            "modules": "commonjs",
+            "targets": {
+              "node": "current"
+            }
+          }
+        ]
+      ]
+    }
+  },
+
+  "presets": [
+      "@babel/preset-env"
+  ]
+}

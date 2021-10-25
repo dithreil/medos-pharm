@@ -22,7 +22,7 @@ module.exports = {
         createDefaultProgram: true,
     },
 
-    ignorePatterns: ['vendor/*'],
+    // ignorePatterns: ['vendor/*'],
     env: {
         browser: true,
     },

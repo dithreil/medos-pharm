@@ -53,47 +53,45 @@
     </q-layout>
 </template>
 
-<script>
+<script lang="ts">
 import {requests, apiConstants} from '../api';
 import * as notifizer from '../utils/notifizer';
+import {Component, Ref, Vue} from 'vue-property-decorator';
+import {QForm} from 'quasar';
 
-export default {
-    data() {
-        return {
-            model: {
-                username: '',
-                password: '',
-                user_type: 'employee',
-            },
-        };
-    },
-    methods: {
-        isFormInvalid() {
-            return this.$refs.form.validate()
-                .then((success) => {
-                    return success;
-                });
-        },
-        async login() {
-            const isValid = await this.isFormInvalid();
+@Component
+export default class App extends Vue {
+    @Ref('form') readonly form!: QForm;
+    protected model = {
+        username: '',
+        password: '',
+        user_type: 'employee',
+    };
+    isFormInvalid() {
+        return this.form.validate()
+            .then((success) => {
+                return success;
+            });
+    }
+    async login() {
+        const isValid = await this.isFormInvalid();
 
-            if (!isValid) {
-                return;
-            }
+        if (!isValid) {
+            return;
+        }
 
-            requests.post(apiConstants.AUTH.LOGIN, {...this.model})
-                .then((response) => {
-                    if (200 !== response.status) {
-                        notifizer.error();
-                    } else {
-                        window.location.href = '/admin';
-                    }
-                })
-                .catch((error) => {
-                    console.log(error);
-                    notifizer.error(error.response.data.error);
-                });
-        },
-    },
+        requests.post(apiConstants.AUTH.LOGIN, {...this.model})
+            .then((response) => {
+                if (200 !== response.status) {
+                    notifizer.error('Авторизация не прошла');
+                } else {
+                    window.location.href = '/admin';
+                }
+            })
+            .catch((error) => {
+                console.log(error);
+                notifizer.error(error.response.data.error);
+            });
+    }
 };
 </script>
